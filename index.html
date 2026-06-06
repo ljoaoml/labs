@@ -244,7 +244,10 @@
 <body>
 
 <header>
-  <div class="logo-icon">🧪</div>
+  <div class="logo-icon">
+  <img src="logo.png" style="width:28px;height:28px;object-fit:contain;">
+</div>
+
   <div><h1>Organização de Reagentes</h1></div>
   <span>ABNT · ANVISA · NR-26</span>
 </header>
@@ -518,7 +521,18 @@
     <div class="page-hero">
       <div class="eyebrow">06 / ALMOXARIFADO</div>
       <h2>Planta do Almoxarifado</h2>
-      <p>Toque numa parede para ver suas 6 prateleiras. As prateleiras P1–P3 são de acesso fácil; P4–P6 exigem escada.</p>
+      <p>Toque numa parede para ver suas 6 prateleiras. P1–P3 acesso fácil · P4–P6 requer escada 🪜</p>
+    </div>
+
+    <!-- LEGEND ROW -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+      <span class="lgd" style="--lc:#ff8850;">🔥 Inflamável</span>
+      <span class="lgd" style="--lc:#f0c830;">⚗️ Ácido</span>
+      <span class="lgd" style="--lc:#70b8ff;">🧂 Sal / Base / Inerte</span>
+      <span class="lgd" style="--lc:#d080ff;">☠️ Tóxico / Oxidante</span>
+      <span class="lgd" style="--lc:#ff5555;">🔒 Controlado PF</span>
+      <span class="lgd" style="--lc:#ff9900;">⚔️ Controlado Exército</span>
+      <span class="lgd" style="--lc:#a0b8c8;">🧪 Sol. p/ Descarte</span>
     </div>
 
     <!-- FLOORPLAN -->
@@ -526,60 +540,62 @@
       <div style="font-size:0.66rem;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;text-align:center;margin-bottom:18px;">Vista de cima — escolha a parede</div>
       <div style="position:relative;width:100%;max-width:380px;aspect-ratio:1.15/1;margin:0 auto;">
         <div style="position:absolute;inset:34px;background:linear-gradient(135deg,#b87870,#925252);border-radius:6px;box-shadow:inset 0 0 30px rgba(0,0,0,0.25);"></div>
-        <div style="position:absolute;inset:34px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:rgba(255,255,255,0.55);font-size:0.7rem;font-family:'Space Mono',monospace;pointer-events:none;text-align:center;">
-          <span style="font-size:1.3rem;margin-bottom:2px;">⚗️</span>BANCADA<br>CENTRAL
-          <span style="margin-top:4px;font-size:0.62rem;opacity:0.7;">≈ 2,5 × 2 m</span>
+        <div style="position:absolute;inset:34px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:rgba(255,255,255,0.55);font-size:0.68rem;font-family:'Space Mono',monospace;pointer-events:none;text-align:center;">
+          <span style="font-size:1.2rem;margin-bottom:2px;">⚗️</span>BANCADA<br>CENTRAL<span style="font-size:0.6rem;opacity:0.7;margin-top:4px;">≈ 2,5 × 2 m</span>
         </div>
-        <button class="wallbtn" data-wall="B" onclick="selectWall('B')" style="position:absolute;top:0;left:34px;right:34px;height:30px;--wc:#e8b800;"><span>⚗️ FUNDO</span></button>
-        <button class="wallbtn" data-wall="F" onclick="selectWall('F')" style="position:absolute;bottom:0;left:34px;right:34px;height:30px;--wc:#c060ff;"><span>☠️ FRENTE</span></button>
-        <button class="wallbtn wallbtn-v" data-wall="L" onclick="selectWall('L')" style="position:absolute;left:0;top:34px;bottom:34px;width:30px;--wc:#ff6b2b;"><span>🔥 ESQ.</span></button>
-        <button class="wallbtn wallbtn-v" data-wall="R" onclick="selectWall('R')" style="position:absolute;right:0;top:34px;bottom:34px;width:30px;--wc:#4a9eff;"><span>🧂 DIR.</span></button>
+        <button class="wallbtn" data-wall="B" onclick="selectWall('B')" style="position:absolute;top:0;left:34px;right:34px;height:30px;--wc:#f0c830;"><span>⚗️ FUNDO — ÁCIDOS</span></button>
+        <button class="wallbtn" data-wall="F" onclick="selectWall('F')" style="position:absolute;bottom:0;left:34px;right:34px;height:30px;--wc:#d080ff;"><span>☠️ FRENTE — TÓXICOS</span></button>
+        <button class="wallbtn wallbtn-v" data-wall="L" onclick="selectWall('L')" style="position:absolute;left:0;top:34px;bottom:34px;width:30px;--wc:#ff8850;"><span>🔥 ESQ.</span></button>
+        <button class="wallbtn wallbtn-v" data-wall="R" onclick="selectWall('R')" style="position:absolute;right:0;top:34px;bottom:34px;width:30px;--wc:#70b8ff;"><span>🧂 DIR.</span></button>
       </div>
       <div style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--muted);"><span id="wallCaption">👆 Selecione uma parede acima</span></div>
     </div>
 
     <!-- SHELF STACK -->
-    <div id="shelfStack" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 20px;margin-bottom:18px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
-        <span id="stackIcon" style="font-size:1.5rem;"></span>
+    <div id="shelfStack" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 18px;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <span id="stackIcon" style="font-size:1.4rem;"></span>
         <div>
-          <div style="font-size:0.62rem;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">PAREDE SELECIONADA</div>
-          <div id="stackTitle" style="font-size:1.1rem;font-weight:700;color:var(--text);"></div>
+          <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">PAREDE</div>
+          <div id="stackTitle" style="font-size:1rem;font-weight:700;"></div>
         </div>
+        <div id="stackNote" style="margin-left:auto;font-size:0.68rem;color:var(--muted);font-family:'Space Mono',monospace;text-align:right;"></div>
       </div>
-      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:16px;">Vista frontal — P6 (topo) até P1 (base). Clique numa prateleira.</div>
-      <div id="shelfRows" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div style="font-size:0.63rem;font-family:'Space Mono',monospace;color:#4a5568;font-style:italic;margin-bottom:12px;">* Exemplos de reagentes, não condiz com o estoque atual</div>
+      <div id="shelfRows" style="display:flex;flex-direction:column;gap:7px;"></div>
     </div>
 
     <!-- INFO PANEL -->
     <div id="shelfPanel" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:18px;">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
-        <span id="pIcon" style="font-size:1.8rem;"></span>
-        <div>
-          <div id="pWall" style="font-size:0.62rem;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;"></div>
-          <div id="pTitle" style="font-size:1.05rem;font-weight:700;color:var(--text);"></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
+        <span id="pIcon" style="font-size:1.7rem;"></span>
+        <div style="flex:1;min-width:0;">
+          <div id="pWall" style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;"></div>
+          <div id="pTitle" style="font-size:1rem;font-weight:700;color:var(--text);"></div>
         </div>
-        <span id="pBadge" style="margin-left:auto;font-size:0.62rem;font-family:'Space Mono',monospace;padding:3px 10px;border-radius:5px;font-weight:700;white-space:nowrap;"></span>
+        <span id="pBadge" style="font-size:0.62rem;font-family:'Space Mono',monospace;padding:3px 9px;border-radius:5px;font-weight:700;white-space:nowrap;"></span>
       </div>
+      <!-- control badges -->
+      <div id="pCtrl" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
       <div id="pAccess" style="font-size:0.7rem;margin-bottom:8px;font-family:'Space Mono',monospace;"></div>
-      <div id="pDesc" style="font-size:0.83rem;color:var(--muted);margin-bottom:10px;line-height:1.6;"></div>
-      <div id="pReagents" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-      <div id="pRule" style="margin-top:10px;font-size:0.75rem;padding:8px 12px;border-radius:6px;line-height:1.5;"></div>
+      <div id="pDesc" style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.6;"></div>
+      <div id="pReagents" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+      <div id="pRule" style="font-size:0.74rem;padding:8px 12px;border-radius:6px;line-height:1.5;"></div>
     </div>
 
-    <!-- P1-P6 LOGIC -->
-    <div class="card" style="margin-top:4px;">
-      <div class="card-title">Acesso às 6 prateleiras</div>
+    <!-- P1-P6 ACCESS NOTE -->
+    <div class="card">
+      <div class="card-title">Acesso e regras gerais</div>
       <ul class="rules-list">
-        <li><span class="rule-num" style="color:#00c896;">P1</span><div class="rule-text"><strong>Base — acesso fácil</strong><span>Recipientes pesados, ácidos/bases concentrados, alto risco.</span></div></li>
-        <li><span class="rule-num" style="color:#00c896;">P2</span><div class="rule-text"><strong>Cintura — acesso fácil</strong><span>Uso frequente, periculosidade moderada.</span></div></li>
-        <li><span class="rule-num" style="color:#00c896;">P3</span><div class="rule-text"><strong>Altura dos olhos — acesso fácil</strong><span>Uso diário, menor periculosidade.</span></div></li>
-        <li><span class="rule-num" style="color:#ffb84a;">P4</span><div class="rule-text"><strong>Acima dos olhos — requer escada 🪜</strong><span>Uso ocasional. Itens leves.</span></div></li>
-        <li><span class="rule-num" style="color:#ffb84a;">P5</span><div class="rule-text"><strong>Alta — requer escada 🪜</strong><span>Reserva e itens leves de uso raro.</span></div></li>
-        <li><span class="rule-num" style="color:#ffb84a;">P6</span><div class="rule-text"><strong>Topo — requer escada 🪜</strong><span>Estoque de reserva, frascos vazios, itens muito leves.</span></div></li>
+        <li><span class="rule-num" style="color:#00c896;">P1</span><div class="rule-text"><strong>Base — fácil</strong><span>Itens pesados, perigosos, concentrados. Mais seguros na base: queda = menor risco de respingo alto.</span></div></li>
+        <li><span class="rule-num" style="color:#00c896;">P2</span><div class="rule-text"><strong>Cintura — fácil</strong><span>Uso frequente com risco moderado.</span></div></li>
+        <li><span class="rule-num" style="color:#00c896;">P3</span><div class="rule-text"><strong>Olhos — fácil</strong><span>Uso diário, menor periculosidade.</span></div></li>
+        <li><span class="rule-num" style="color:#ffb84a;">P4</span><div class="rule-text"><strong>Acima dos olhos 🪜</strong><span>Itens leves, uso ocasional. Nunca ácidos/bases concentrados aqui.</span></div></li>
+        <li><span class="rule-num" style="color:#ffb84a;">P5</span><div class="rule-text"><strong>Alta 🪜</strong><span>Reservas leves, itens de uso raro.</span></div></li>
+        <li><span class="rule-num" style="color:#ffb84a;">P6</span><div class="rule-text"><strong>Topo 🪜</strong><span>Estoque de reserva, frascos vazios limpos.</span></div></li>
       </ul>
-      <div class="alert" style="margin-top:14px;margin-bottom:0">
-        ⚠️ <span>Nunca coloque ácidos, bases concentrados ou frascos pesados em P4–P6 (acesso por escada). Risco de queda grave.</span>
+      <div class="alert" style="margin-top:12px;margin-bottom:0;">
+        ⚠️ <span>Reagentes <strong>controlados pela PF</strong> exigem registro mensal no <strong>SIPROQUIM 2</strong> (CRC + CLF ativos). Ácido nítrico: registro no <strong>Exército Brasileiro (SisFPC)</strong>.</span>
       </div>
     </div>
 
@@ -588,22 +604,23 @@
 </main>
 
 <style>
-  .wallbtn { border:none; cursor:pointer; border-radius:5px; background: color-mix(in srgb, var(--wc) 22%, #1a1f28); color: var(--wc); font-family:'Space Mono',monospace; font-size:0.66rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition: all 0.18s; letter-spacing:0.03em; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wc) 40%, transparent); }
-  .wallbtn:hover { background: color-mix(in srgb, var(--wc) 38%, #1a1f28); transform: scale(1.02); }
+  .lgd { font-size:0.72rem; font-family:'DM Sans',sans-serif; font-weight:600; padding:4px 11px; border-radius:20px; background: color-mix(in srgb, var(--lc) 18%, transparent); color: var(--lc); border: 1px solid color-mix(in srgb, var(--lc) 40%, transparent); }
+  .wallbtn { border:none; cursor:pointer; border-radius:5px; background: color-mix(in srgb, var(--wc) 22%, #1a1f28); color: var(--wc); font-family:'Space Mono',monospace; font-size:0.64rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition: all 0.18s; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wc) 40%, transparent); }
+  .wallbtn:hover { background: color-mix(in srgb, var(--wc) 38%, #1a1f28); transform:scale(1.02); }
   .wallbtn.active { background: color-mix(in srgb, var(--wc) 55%, #1a1f28); color:#fff; box-shadow: inset 0 0 0 2px var(--wc), 0 0 14px color-mix(in srgb, var(--wc) 50%, transparent); }
-  .wallbtn-v span { writing-mode: vertical-rl; transform: rotate(180deg); }
-
-  .shelf-row { display:flex; align-items:center; gap:12px; background: var(--surface2); border:1px solid var(--border); border-left: 4px solid var(--sc); border-radius:10px; padding:12px 14px; cursor:pointer; transition: all 0.16s; }
-  .shelf-row:hover { transform: translateX(3px); border-color: var(--sc); background:#222a36; }
-  .shelf-row.active { background: color-mix(in srgb, var(--sc) 14%, var(--surface2)); border-color: var(--sc); }
-  .shelf-tag { font-family:'Space Mono',monospace; font-size:0.7rem; font-weight:700; color: var(--sc); background: color-mix(in srgb, var(--sc) 16%, transparent); width:34px; height:34px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .wallbtn-v span { writing-mode:vertical-rl; transform:rotate(180deg); }
+  .shelf-row { display:flex; align-items:center; gap:10px; background:var(--surface2); border:1px solid var(--border); border-left:4px solid var(--sc); border-radius:10px; padding:11px 13px; cursor:pointer; transition:all 0.15s; }
+  .shelf-row:hover { transform:translateX(3px); border-color:var(--sc); background:#222a36; }
+  .shelf-row.active { background: color-mix(in srgb, var(--sc) 14%, var(--surface2)); border-color:var(--sc); }
+  .shelf-tag { font-family:'Space Mono',monospace; font-size:0.68rem; font-weight:700; color:var(--sc); background: color-mix(in srgb, var(--sc) 16%, transparent); width:32px; height:32px; border-radius:7px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .shelf-row-body { flex:1; min-width:0; }
-  .shelf-row-title { font-size:0.84rem; font-weight:600; color:var(--text); }
-  .shelf-row-sub { font-size:0.71rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .shelf-access { font-size:0.6rem; font-family:'Space Mono',monospace; padding:2px 6px; border-radius:4px; flex-shrink:0; }
-  .shelf-bottles { display:flex; gap:3px; align-items:flex-end; flex-shrink:0; height:26px; }
-  .shelf-bottles i { display:block; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.55); border-radius:2px 2px 1px 1px; }
-  .reagent-chip { font-size:0.72rem; padding:3px 10px; border-radius:20px; font-family:'DM Sans',sans-serif; }
+  .shelf-row-title { font-size:0.82rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .shelf-row-sub { font-size:0.69rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .access-tag { font-size:0.58rem; font-family:'Space Mono',monospace; padding:2px 5px; border-radius:4px; flex-shrink:0; }
+  .ctrl-badge { font-size:0.64rem; font-family:'Space Mono',monospace; padding:2px 7px; border-radius:4px; font-weight:700; }
+  .reagent-chip { font-size:0.71rem; padding:3px 9px; border-radius:20px; font-family:'DM Sans',sans-serif; }
+  .shelf-bottles { display:flex; gap:3px; align-items:flex-end; flex-shrink:0; height:24px; }
+  .shelf-bottles i { display:block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.5); border-radius:2px 2px 1px 1px; }
 </style>
 
 <script>
@@ -615,137 +632,180 @@
   }
 
   const WALLS = {
-    L: { name:'Parede Esquerda', cat:'Inflamáveis e Solventes', icon:'🔥', color:'#ff8850', bg:'rgba(255,107,43,0.15)' },
-    B: { name:'Parede do Fundo', cat:'Ácidos',                  icon:'⚗️', color:'#f0c830', bg:'rgba(232,184,0,0.15)'  },
-    R: { name:'Parede Direita',  cat:'Sais, Bases e Inertes',   icon:'🧂', color:'#70b8ff', bg:'rgba(74,158,255,0.15)' },
-    F: { name:'Parede da Frente',cat:'Tóxicos, Oxidantes e Soluções', icon:'☠️', color:'#d080ff', bg:'rgba(192,96,255,0.15)' },
+    L:{ name:'Esquerda — Inflamáveis & Solventes', icon:'🔥', color:'#ff8850', bg:'rgba(255,107,43,0.15)',
+        note:'⚠️ Armário antichama obrigatório' },
+    B:{ name:'Fundo — Ácidos',                     icon:'⚗️', color:'#f0c830', bg:'rgba(232,184,0,0.15)',
+        note:'⚠️ Bandejas de contenção em P1–P3' },
+    R:{ name:'Direita — Sais, Bases & Inertes',    icon:'🧂', color:'#70b8ff', bg:'rgba(74,158,255,0.15)',
+        note:'✓ Menor risco geral' },
+    F:{ name:'Frente — Tóxicos, Oxidantes & Sol.', icon:'☠️', color:'#d080ff', bg:'rgba(192,96,255,0.15)',
+        note:'🔒 P1 com armário trancado' },
   };
 
-  // ACESSO: P1-P3 fácil, P4-P6 escada
+  // ctrl: array of badge objects {label, color, bg}
+  const PF  = { label:'🔒 Controlado PF · SIPROQUIM 2', color:'#ff7070', bg:'rgba(255,80,80,0.14)' };
+  const EB  = { label:'⚔️ Controlado Exército · SisFPC', color:'#ff9900', bg:'rgba(255,153,0,0.14)' };
+  const COFRE = { label:'🔐 COFRE OBRIGATÓRIO',          color:'#ff5555', bg:'rgba(255,50,50,0.18)' };
+
+  // Helper to build reagent objects
+  // r(name)        → normal reagent
+  // r(name,'PF')   → controlled PF
+  // r(name,'EB')   → controlled Exército
+  function r(name, ctrl) {
+    return { name, ctrl: ctrl || null };
+  }
+
   const SHELF_DATA = {
-    /* ════ ESQUERDA — INFLAMÁVEIS / SOLVENTES ════ */
-    L1:{ icon:'🔥', title:'Solventes pesados / estoque', short:'Benzeno · Tolueno · grandes volumes',
-         desc:'Recipientes maiores e mais pesados de solventes inflamáveis na base, de fácil acesso e seguros contra queda.',
-         reagents:['Benzeno','Ciclohexano','Ciclohexanona','Éter de petróleo (estoque)'],
-         rule:'⚡ Armário antichama, ventilado, longe de calor e faíscas.', rc:'rgba(255,107,43,0.12)', rt:'#ff8850' },
-    L2:{ icon:'🔥', title:'Hidrocarbonetos e clorados', short:'Hexano · Clorofórmio · N,N-dimetilformamida',
-         desc:'Solventes apolares e halogenados de uso frequente. EPI completo e capela no manuseio.',
-         reagents:['N-Hexano','Clorofórmio','N,N-Dimetilformamida','Acetato de etila'],
-         rule:'⚡ Ventilação local ligada. Clorados longe de chama.', rc:'rgba(255,107,43,0.12)', rt:'#ff8850' },
+
+    /* ══════════════════════════════════════════════
+       ESQUERDA — INFLAMÁVEIS & SOLVENTES
+    ══════════════════════════════════════════════ */
+    L1:{ icon:'🔥', title:'Solventes pesados — estoque', short:'Benzeno · Tolueno · grandes volumes',
+         desc:'Recipientes maiores (1L+) na base para minimizar risco de queda. Benzeno e Tolueno são controlados PF Lista II.',
+         reagents:[r('Benzeno','PF'), r('Tolueno','PF'), r('Ciclohexano'), r('Ciclohexanona'), r('Éter de petróleo (estoque)')],
+         ctrl:[PF],
+         rule:'⚡ Armário antichama. Tolueno e Benzeno: registro mensal SIPROQUIM 2.', rc:'rgba(255,107,43,0.12)', rt:'#ff8850' },
+    L2:{ icon:'🔥', title:'Solventes halogenados & especiais', short:'Clorofórmio · Acetato de etila · N,N-dimetilformamida',
+         desc:'Clorofórmio e Acetato de etila são controlados PF Lista II. Usar apenas em capela.',
+         reagents:[r('Clorofórmio','PF'), r('Acetato de etila','PF'), r('N,N-Dimetilformamida'), r('Ciclohexanona')],
+         ctrl:[PF],
+         rule:'⚡ Controlados PF — mapa mensal SIPROQUIM 2. Somente em capela.', rc:'rgba(255,107,43,0.12)', rt:'#ff8850' },
     L3:{ icon:'🔥', title:'Álcoois e acetona (uso diário)', short:'Etanol · Metanol · Acetona · Isopropanol',
-         desc:'Os solventes mais usados no dia a dia, na altura dos olhos para acesso rápido e seguro.',
-         reagents:['Etanol absoluto/P.A','Álcool metílico','Acetona','Álcool isopropílico','Álcool 70%'],
-         rule:'⚡ Frascos bem vedados. Voláteis e altamente inflamáveis.', rc:'rgba(255,107,43,0.12)', rt:'#ff8850' },
-    L4:{ icon:'🔥', title:'Solventes leves — reserva 🪜', short:'Éter de petróleo · glicerina',
-         desc:'Reserva de solventes em recipientes leves. Acesso por escada para itens de uso ocasional.',
-         reagents:['Éter de petróleo (reserva)','Glicerina/Glicerol','Vaselina líquida'],
-         rule:'🪜 Acesso por escada. Apenas frascos leves aqui.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
-    L5:{ icon:'🔥', title:'Indicadores em solvente 🪜', short:'Indicadores orgânicos · graxas',
-         desc:'Frascos pequenos de indicadores dissolvidos e materiais auxiliares. Itens leves.',
-         reagents:['Graxa de silicone','Silicone líquido','Algodão de vidro'],
-         rule:'🪜 Acesso por escada. Itens leves e de uso raro.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
-    L6:{ icon:'🔥', title:'Topo — reserva / vazios 🪜', short:'Frascos de reserva e vazios limpos',
-         desc:'Prateleira mais alta: estoque de reserva e frascos vazios limpos. Apenas itens muito leves.',
-         reagents:['Frascos vazios limpos','Estoque de reserva'],
-         rule:'🪜 Topo — escada obrigatória. Nada pesado ou perigoso.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+         desc:'Acetona é controlada PF Lista II. Álcoois são Lista VII (sem controle interno, mas monitorar quantidades).',
+         reagents:[r('Acetona','PF'), r('Etanol absoluto/P.A'), r('Álcool metílico'), r('Álcool isopropílico'), r('Álcool 70%')],
+         ctrl:[PF],
+         rule:'⚡ Acetona: SIPROQUIM 2 obrigatório. Frascos bem vedados. Voláteis.', rc:'rgba(255,107,43,0.12)', rt:'#ff8850' },
+    L4:{ icon:'🔥', title:'Solventes leves — reserva 🪜', short:'Éter de petróleo · N-hexano · álcool tartárico',
+         desc:'Recipientes leves de reserva. Sem controle obrigatório interno (Lista VII). Acesso por escada.',
+         reagents:[r('N-Hexano'), r('Éter de petróleo (reserva)'), r('Álcool tartárico P.A')],
+         ctrl:[],
+         rule:'🪜 Escada. Lista VII — sem controle interno. Apenas frascos leves.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+    L5:{ icon:'🔥', title:'Auxiliares 🪜', short:'Glicerina · vaselina · silicone · algodão',
+         desc:'Materiais auxiliares e consumíveis de baixo risco. Itens leves.',
+         reagents:[r('Glicerina/Glicerol'), r('Vaselina líquida/sólida'), r('Silicone líquido'), r('Graxa de silicone'), r('Algodão de vidro')],
+         ctrl:[],
+         rule:'🪜 Escada. Baixo risco. Itens leves.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+    L6:{ icon:'🔥', title:'Topo — reserva / frascos vazios 🪜', short:'Estoque leve de reserva',
+         desc:'Apenas estoque de reserva em frascos pequenos e frascos vazios limpos.',
+         reagents:[r('Frascos vazios limpos'), r('Estoque mínimo de reserva')],
+         ctrl:[],
+         rule:'🪜 Topo. Nada pesado ou perigoso aqui.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
 
-    /* ════ FUNDO — ÁCIDOS ════ */
-    B1:{ icon:'⚗️', title:'Ácido nítrico — ISOLADO', short:'HNO₃ concentrado',
-         desc:'Ácido nítrico fica ISOLADO na base, em bandeja exclusiva, longe de todos os orgânicos e demais ácidos.',
-         reagents:['Ácido nítrico conc.'],
-         rule:'⚠️ CRÍTICO: jamais perto de orgânicos, HCl ou inflamáveis. Bandeja exclusiva.', rc:'rgba(255,87,87,0.12)', rt:'#ff6666' },
-    B2:{ icon:'⚗️', title:'Ácidos minerais concentrados', short:'H₂SO₄ · HCl · H₃PO₄',
-         desc:'Ácidos inorgânicos fortes concentrados, na base por segurança. Bandeja de contenção dupla.',
-         reagents:['Ácido sulfúrico conc.','Ácido clorídrico conc.','Ácido fosfórico','Ácido sulfúrico + molibdato'],
-         rule:'🪣 Bandeja de contenção ≥10% do volume. NUNCA no alto. EPI completo.', rc:'rgba(232,184,0,0.12)', rt:'#f0c830' },
-    B3:{ icon:'⚗️', title:'Ácidos orgânicos / fracos', short:'Ác. acético · fórmico · cítrico · bórico',
-         desc:'Ácidos orgânicos e fracos de uso frequente, na altura da cintura/olhos. Odor intenso — usar capela.',
-         reagents:['Ácido acético glacial','Ácido fórmico','Ácido cítrico','Ácido bórico','Ácido benzóico','Ácido ascórbico','Ácido salicílico','Ácido oxálico'],
-         rule:'🪣 Usar em capela. Bandeja de contenção. Separar dos minerais fortes.', rc:'rgba(232,184,0,0.12)', rt:'#f0c830' },
-    B4:{ icon:'⚗️', title:'Ácidos sólidos / especiais 🪜', short:'Ác. sulfanílico · sulfanílico · náftol-sulfônico',
-         desc:'Ácidos em pó e reagentes ácidos especiais, em frascos leves. Acesso por escada.',
-         reagents:['Ácido sulfanílico','Ácido 1-amino-2-naftol-4-sulfônico','Ácido fênico/Fenol','Ácido tartárico'],
-         rule:'🪜 Escada. Pós ácidos bem vedados, longe de umidade.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
-    B5:{ icon:'⚗️', title:'Reserva de ácidos diluídos 🪜', short:'Soluções-padrão ácidas leves',
-         desc:'Reserva de ácidos diluídos e frascos pequenos. Itens leves na parte alta.',
-         reagents:['Ácido bórico 20g/L','Ácido clorídrico 9,25%','Reserva diluídos'],
-         rule:'🪜 Escada. Apenas frascos leves e diluídos.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
-    B6:{ icon:'⚗️', title:'Topo — reserva ácida 🪜', short:'Estoque de reserva',
-         desc:'Prateleira mais alta: reserva de ácidos em frascos pequenos e leves.',
-         reagents:['Estoque de reserva'],
-         rule:'🪜 Topo — escada obrigatória. Nada concentrado ou pesado.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+    /* ══════════════════════════════════════════════
+       FUNDO — ÁCIDOS
+    ══════════════════════════════════════════════ */
+    B1:{ icon:'⚔️', title:'Ácido nítrico — ISOLADO · Exército', short:'HNO₃ concentrado / fumegante',
+         desc:'Controlado pelo Exército Brasileiro (SisFPC). ISOLADO em bandeja exclusiva. Jamais perto de orgânicos, HCl ou inflamáveis.',
+         reagents:[r('Ácido nítrico concentrado','EB'), r('Ácido nítrico fumegante','EB')],
+         ctrl:[EB],
+         rule:'⚔️ Registro obrigatório SisFPC/Exército. Bandeja exclusiva. NUNCA com orgânicos.', rc:'rgba(255,153,0,0.14)', rt:'#ff9900' },
+    B2:{ icon:'⚗️', title:'Ácidos inorgânicos concentrados · PF', short:'H₂SO₄ · HCl concentrados',
+         desc:'Ácidos fortes concentrados. Controlados PF Lista IV. Bandejas de contenção ≥10% volume. NUNCA no alto.',
+         reagents:[r('Ácido sulfúrico concentrado','PF'), r('Ácido clorídrico concentrado','PF'), r('Ácido sulfúrico + molibdato de amônio','PF'), r('Ácido fosfórico (H₃PO₄)','PF')],
+         ctrl:[PF],
+         rule:'⚗️ Controlados PF Lista IV. NUNCA no alto. Bandeja dupla. EPI completo.', rc:'rgba(232,184,0,0.12)', rt:'#f0c830' },
+    B3:{ icon:'⚗️', title:'Ácidos orgânicos concentrados · PF', short:'Ác. acético · fórmico · HCl diluído',
+         desc:'Acético e fórmico são controlados PF Lista IV (≥10%). Odor intenso — usar sempre em capela.',
+         reagents:[r('Ácido acético glacial','PF'), r('Ácido acético','PF'), r('Ácido fórmico','PF'), r('Ácido clorídrico 9,25%','PF')],
+         ctrl:[PF],
+         rule:'⚗️ Controlados PF. Usar em capela. Bandeja de contenção obrigatória.', rc:'rgba(232,184,0,0.12)', rt:'#f0c830' },
+    B4:{ icon:'⚗️', title:'Ácidos fracos / sólidos 🪜', short:'Bórico · benzóico · ascórbico · cítrico',
+         desc:'Ácido bórico e benzóico são controlados PF Lista IV. Demais têm menor risco. Frascos leves.',
+         reagents:[r('Ácido bórico','PF'), r('Ácido benzóico','PF'), r('Ácido cítrico'), r('Ácido ascórbico'), r('Ácido salicílico'), r('Ácido oxálico')],
+         ctrl:[PF],
+         rule:'🪜 Escada. Bórico e benzóico: controle PF Lista IV. Pós bem vedados.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+    B5:{ icon:'⚗️', title:'Ácidos especiais 🪜', short:'Ác. sulfanílico · náftol-sulfônico · fenol',
+         desc:'Reagentes ácidos especiais. Fenol é tóxico. Frascos pequenos leves.',
+         reagents:[r('Ácido sulfanílico'), r('Ácido 1-amino-2-naftol-4-sulfônico'), r('Fenol/Ácido fênico (tóxico)'), r('Ácido tartárico')],
+         ctrl:[],
+         rule:'🪜 Escada. Fenol é tóxico — EPI. Frascos pequenos.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+    B6:{ icon:'⚗️', title:'Topo — reserva / tampões ácidos 🪜', short:'Tampões padrão de pH · reserva',
+         desc:'Tampões de pH e reserva de ácidos diluídos em frascos pequenos.',
+         reagents:[r('Tampão pH 4'), r('Tampão pH 7'), r('Tampão pH 10'), r('Estoque reserva ácidos diluídos')],
+         ctrl:[],
+         rule:'🪜 Topo. Apenas frascos leves e diluídos.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
 
-    /* ════ DIREITA — SAIS, BASES, INERTES ════ */
-    R1:{ icon:'🔵', title:'Bases sólidas pesadas', short:'NaOH · KOH · Ca(OH)₂ · CAL',
-         desc:'Hidróxidos sólidos pesados e higroscópicos na base. Recipientes grandes, fácil acesso.',
-         reagents:['Hidróxido de sódio','Hidróxido de potássio','Hidróxido de cálcio','Óxido de cálcio (cal)','Suspensão de hidróxido de alumínio'],
-         rule:'🔵 Frascos herméticos (higroscópicos). NUNCA com ácidos.', rc:'rgba(74,158,255,0.12)', rt:'#70b8ff' },
-    R2:{ icon:'🧂', title:'Sais metálicos pesados', short:'Sulfatos · cloretos · fosfatos (1kg)',
-         desc:'Sais inorgânicos em embalagens grandes (~1kg), na altura da cintura para movimentação fácil.',
-         reagents:['Sulfato de ferro','Sulfato de magnésio','Sulfato de manganês','Sulfato de alumínio','Cloreto de ferro','Cloreto de cálcio','Cloreto de magnésio','Fosfato de sódio','Carbonato de sódio/potássio'],
-         rule:'🧂 Baixo risco. Manter secos e bem vedados.', rc:'rgba(0,200,150,0.10)', rt:'#40d8a0' },
-    R3:{ icon:'🧂', title:'Sais e inertes de uso diário', short:'NaCl · acetatos · oxalatos · brometos',
-         desc:'Sais de uso frequente em embalagens médias (250–500g), na altura dos olhos.',
-         reagents:['Cloreto de sódio','Acetato de sódio/amônio','Oxalato de sódio/amônio','Brometo de potássio','Iodeto/iodato de potássio','Nitrito de sódio','Amido solúvel','Caulim'],
-         rule:'🧂 Baixo risco. Identificação clara e validade em dia.', rc:'rgba(0,200,150,0.10)', rt:'#40d8a0' },
-    R4:{ icon:'🧂', title:'Sais especiais / indicadores 🪜', short:'Murexida · negro de eriocromo · corantes',
-         desc:'Sais especiais, indicadores em pó e corantes em frascos pequenos. Acesso por escada.',
-         reagents:['Murexida','Negro de eriocromo T','Azul de metileno','Verde de bromocresol','Vermelho de metila','Alaranjado de metila','Cristal violeta','Safranina','Difenilcarbazida/Ditizona'],
-         rule:'🪜 Escada. Frascos pequenos e leves, ao abrigo de luz.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
-    R5:{ icon:'🧂', title:'Reserva de sais / tampões 🪜', short:'Boratos · bicarbonatos · reserva',
-         desc:'Reserva de sais e componentes de tampão em frascos leves. Parte alta.',
-         reagents:['Tetraborato/Bórax','Bicarbonato de potássio','Bissulfato de sódio','Sulfito de sódio','Reserva de sais'],
-         rule:'🪜 Escada. Apenas frascos leves.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
-    R6:{ icon:'🧂', title:'Topo — reserva / vazios 🪜', short:'Estoque de reserva e vazios',
-         desc:'Prateleira mais alta: reserva de sais e frascos vazios limpos. Itens muito leves.',
-         reagents:['Frascos vazios limpos','Estoque de reserva'],
-         rule:'🪜 Topo — escada obrigatória. Nada pesado.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+    /* ══════════════════════════════════════════════
+       DIREITA — SAIS, BASES & INERTES
+    ══════════════════════════════════════════════ */
+    R1:{ icon:'🔵', title:'Bases sólidas pesadas', short:'NaOH · KOH · Ca(OH)₂ · Cal',
+         desc:'Hidróxidos sólidos pesados e higroscópicos. Lista VII (sem controle interno). Frascos herméticos obrigatórios.',
+         reagents:[r('Hidróxido de sódio'), r('Hidróxido de potássio'), r('Hidróxido de cálcio'), r('Óxido de cálcio (cal)'), r('Suspensão Al(OH)₃')],
+         ctrl:[],
+         rule:'🔵 NUNCA com ácidos. Frascos herméticos — fortemente higroscópicos.', rc:'rgba(74,158,255,0.12)', rt:'#70b8ff' },
+    R2:{ icon:'🧂', title:'Sais inorgânicos — embalagens grandes', short:'Sulfatos · fosfatos · carbonatos (1kg)',
+         desc:'Sais inorgânicos em embalagens 500g–1kg. Carbonato de sódio e potássio são Lista VII.',
+         reagents:[r('Sulfato de ferro'), r('Sulfato de magnésio'), r('Sulfato de manganês'), r('Sulfato de alumínio'), r('Carbonato de sódio'), r('Carbonato de potássio'), r('Fosfatos de sódio/potássio'), r('Cloreto de ferro'), r('Cloreto de cálcio/magnésio')],
+         ctrl:[],
+         rule:'🧂 Baixo risco. Secos e vedados. Lista VII — sem controle interno.', rc:'rgba(0,200,150,0.10)', rt:'#40d8a0' },
+    R3:{ icon:'🧂', title:'Sais de uso diário + NH₄OH · PF', short:'NaCl · acetatos · oxalatos · NH₄OH',
+         desc:'Sais de uso frequente. Hidróxido de amônio é controlado PF Lista V (≥10%).',
+         reagents:[r('Hidróxido de amônio','PF'), r('Cloreto de sódio'), r('Acetato de sódio'), r('Acetato de amônio'), r('Oxalato de sódio'), r('Oxalato de amônio'), r('Brometo de potássio'), r('Nitrito de sódio'), r('Amido solúvel'), r('Caulim')],
+         ctrl:[PF],
+         rule:'⚗️ NH₄OH: Controlado PF Lista V — SIPROQUIM 2. Usar em capela.', rc:'rgba(74,158,255,0.12)', rt:'#70b8ff' },
+    R4:{ icon:'🧂', title:'Sais analíticos especiais · PF 🪜', short:'Tiossulfato · EDTA · hidroxilamina · cloreto de amônio',
+         desc:'Hidroxilamina e cloridrato são controlados PF Lista VI. Cloreto de amônio é controlado PF Lista VI.',
+         reagents:[r('Tiossulfato de sódio'), r('Sal dissódico EDTA'), r('Hidroxilamina','PF'), r('Hidroxilamina cloridrato','PF'), r('Cloreto de amônio','PF'), r('Sulfato de cobre II'), r('Sulfato de prata')],
+         ctrl:[PF],
+         rule:'🪜 Escada. Hidroxilamina + Cloreto de amônio: controlados PF Lista VI.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
+    R5:{ icon:'🧂', title:'Indicadores & corantes 🪜', short:'Murexida · negro eriocromo · azul metileno',
+         desc:'Indicadores em pó e corantes em frascos pequenos. Baixo risco. Ao abrigo de luz.',
+         reagents:[r('Murexida'), r('Negro de eriocromo T'), r('Azul de metileno'), r('Verde de bromocresol'), r('Vermelho de metila'), r('Alaranjado de metila'), r('Azul de timol'), r('Cristal violeta'), r('Safranina'), r('Ditizona')],
+         ctrl:[],
+         rule:'🪜 Escada. Itens leves. Proteger da luz — frascos âmbar.', rc:'rgba(0,200,150,0.10)', rt:'#40d8a0' },
+    R6:{ icon:'🧂', title:'Topo — reserva de sais · PF 🪜', short:'Bórax · bicarbonato K · sulfito',
+         desc:'Reserva de sais em frascos leves. Bicarbonato de potássio é controlado PF Lista V.',
+         reagents:[r('Tetraborato de sódio/Bórax'), r('Borato de sódio anidro'), r('Bicarbonato de potássio','PF'), r('Bissulfato de sódio'), r('Sulfito de sódio'), r('Sulfato de sódio')],
+         ctrl:[PF],
+         rule:'🪜 Topo. Bicarbonato de K: PF Lista V. Apenas frascos leves.', rc:'rgba(255,184,74,0.12)', rt:'#ffb84a' },
 
-    /* ════ FRENTE — TÓXICOS, OXIDANTES, SOLUÇÕES ════ */
-    F1:{ icon:'☠️', title:'Tóxicos de mercúrio/metais — COFRE', short:'Sais de Hg · cianetos · arsenito',
-         desc:'Substâncias muito tóxicas e cianetos na base, em armário trancado/cofre. Acesso controlado e registrado.',
-         reagents:['Cloreto de mercúrio','Sulfato de mercúrio','Óxido de mercúrio','Iodeto de mercúrio','Cianeto de potássio','Meta-arsenito de sódio','Azida sódica'],
-         rule:'🔒 COFRE TRANCADO. Registro com assinatura. Cianeto JAMAIS perto de ácido.', rc:'rgba(255,87,87,0.12)', rt:'#ff6666' },
-    F2:{ icon:'☠️', title:'Tóxicos / metais pesados', short:'Nitrato de prata · sais de bário · paládio',
-         desc:'Sais tóxicos e metais pesados de valor. Acesso restrito, na altura da cintura.',
-         reagents:['Nitrato de prata','Sulfato de prata','Cloreto de cobalto II','Cloreto estanhoso','Nitrato de paládio','Sais de zircônio','Antimônio padrão'],
-         rule:'🔒 Acesso restrito. Frascos âmbar (fotossensíveis). EPI completo.', rc:'rgba(192,96,255,0.12)', rt:'#d080ff' },
-    F3:{ icon:'💥', title:'Oxidantes', short:'KMnO₄ · dicromato · persulfatos · H₂O₂',
-         desc:'Agentes oxidantes fortes, na altura dos olhos. Mantidos LONGE de inflamáveis e orgânicos.',
-         reagents:['Permanganato de potássio','Dicromato/bicromato de potássio','Cromato de potássio','Persulfato de amônio/potássio','Bromato de potássio','Iodato de potássio','Água oxigenada / peróxido','Hipoclorito de cálcio'],
-         rule:'💥 NUNCA com inflamáveis/orgânicos. Bandeja seca. Local fresco.', rc:'rgba(255,145,0,0.12)', rt:'#ffaa44' },
-    F4:{ icon:'🧪', title:'SOLUÇÕES p/ DESCARTE 🪜', short:'Sol. ácidas, básicas, EDTA, padrões…',
-         desc:'ÁREA TEMPORÁRIA para todas as soluções prontas (Sol.) aguardando descarte. Pesquisar o procedimento correto para cada antes de descartar.',
-         reagents:['Sol. ácidas (H₂SO₄, HCl)','Sol. NaOH','Sol. EDTA','Sol. AgNO₃','Sol. tampão','Sol. iodo/lugol','Sol. permanganato','Sol. padrões','demais Sol.'],
-         rule:'🗑️ NÃO descartar ainda. Segregar, rotular "AGUARDA DESCARTE" e pesquisar o método de cada uma.', rc:'rgba(120,140,160,0.16)', rt:'#aab8c8' },
-    F5:{ icon:'🧪', title:'SOLUÇÕES-estoque / padrões 🪜', short:'Sol. estoque metais 1000ppm · padrões',
-         desc:'Continuação da área de soluções: soluções-estoque de metais e soluções-padrão, também aguardando descarte.',
-         reagents:['Sol. estoque Zn/Ni/Mn 1000ppm','Sol. estoque Fe/Cu','Sol. padrão NaCl','Sol. estoque cloro-mercúrio'],
-         rule:'🗑️ Aguarda descarte. Soluções de metais pesados exigem descarte especial.', rc:'rgba(120,140,160,0.16)', rt:'#aab8c8' },
-    F6:{ icon:'☠️', title:'Topo — tóxicos leves / reserva 🪜', short:'Indicadores tóxicos · reserva',
-         desc:'Prateleira mais alta: frascos pequenos de reagentes tóxicos leves e reserva. Acesso por escada com cuidado redobrado.',
-         reagents:['O-toluidina','Nitroprussiato de sódio','Dietilditiocarbamato de sódio','Reserva tóxicos leves'],
-         rule:'🪜🔒 Escada + acesso restrito. Apenas frascos pequenos e leves.', rc:'rgba(192,96,255,0.12)', rt:'#d080ff' },
+    /* ══════════════════════════════════════════════
+       FRENTE — TÓXICOS, OXIDANTES & SOLUÇÕES
+    ══════════════════════════════════════════════ */
+    F1:{ icon:'🔐', title:'Muito tóxicos — COFRE TRANCADO', short:'Hg · cianetos · arsenito · azida',
+         desc:'Substâncias extremamente tóxicas. COFRE com chave. Registro de entrada/saída com assinatura a cada uso.',
+         reagents:[r('Cloreto de mercúrio II','PF'), r('Sulfato de mercúrio II'), r('Óxido de mercúrio II'), r('Iodeto de mercúrio II'), r('Cianeto de potássio'), r('Meta-arsenito de sódio'), r('Azida sódica'), r('Nitroprussiato de sódio')],
+         ctrl:[PF, COFRE],
+         rule:'🔐 COFRE COM CHAVE. Cloreto Hg II: PF Lista VI. Cianeto JAMAIS perto de ácido.', rc:'rgba(255,50,50,0.12)', rt:'#ff5555' },
+    F2:{ icon:'☠️', title:'Tóxicos metais pesados — acesso restrito', short:'AgNO₃ · paládio · cobalto · estanho · zircônio',
+         desc:'Sais tóxicos de metais pesados. Armário fechado com chave. Frascos âmbar para fotossensíveis.',
+         reagents:[r('Nitrato de prata'), r('Sulfato de prata'), r('Nitrato de paládio'), r('Cloreto de cobalto II'), r('Cloreto estanhoso'), r('Oxicloreto de zircônio'), r('Antimônio padrão (AAS)')],
+         ctrl:[],
+         rule:'🔒 Acesso restrito. Frascos âmbar (fotossensíveis). EPI. Registro de uso.', rc:'rgba(192,96,255,0.12)', rt:'#d080ff' },
+    F3:{ icon:'💥', title:'Oxidantes · PF — longe dos inflamáveis', short:'KMnO₄ · dicromato · persulfatos · H₂O₂',
+         desc:'Agentes oxidantes fortes. Permanganato, Cromato e Dicromatos são controlados PF Lista VI. NUNCA com orgânicos.',
+         reagents:[r('Permanganato de potássio','PF'), r('Dicromato de potássio','PF'), r('Cromato de potássio','PF'), r('Bicromato de potássio','PF'), r('Persulfato de amônio'), r('Persulfato de potássio'), r('Bromato de potássio'), r('Iodato de potássio'), r('Peróxido de hidrogênio'), r('Hipoclorito de cálcio'), r('Água oxigenada')],
+         ctrl:[PF],
+         rule:'💥 KMnO₄, Cromatos, Dicromatos: PF Lista VI — SIPROQUIM 2. NUNCA com orgânicos.', rc:'rgba(255,145,0,0.13)', rt:'#ffaa44' },
+    F4:{ icon:'🧪', title:'SOLUÇÕES — aguarda descarte', short:'Sol. ácidas · básicas · EDTA · padrões…',
+         desc:'Área temporária para todas as soluções prontas (Sol.). NÃO descartar antes de pesquisar o método correto. Priorizar soluções com mercúrio.',
+         reagents:[r('Sol. H₂SO₄ (várias)'), r('Sol. HCl'), r('Sol. NaOH'), r('Sol. EDTA'), r('Sol. AgNO₃'), r('Sol. tampão (várias)'), r('Sol. iodo/lugol'), r('Sol. permanganato'), r('Sol. tiossulfato'), r('Sol. indicadores')],
+         ctrl:[],
+         rule:'🗑️ Rotular "AGUARDA DESCARTE". Pesquisar método individual. Sol. com Hg: descarte especial urgente.', rc:'rgba(120,140,160,0.16)', rt:'#aab8c8' },
+    F5:{ icon:'🧪', title:'SOLUÇÕES-estoque — aguarda descarte 🪜', short:'Estoques 1000ppm · padrões AAS/ICP',
+         desc:'Soluções-estoque de metais (Zn, Ni, Mn, Fe, Cu) e padrões AAS/ICP. Metais pesados exigem descarte especial.',
+         reagents:[r('Sol. estoque Zn 1000ppm'), r('Sol. estoque Ni 1000ppm'), r('Sol. estoque Mn 1000ppm'), r('Sol. estoque Fe'), r('Sol. estoque Cu'), r('Sol. estoque cloro-mercúrio'), r('Sol. padrão NaCl'), r('Sol. padrão fosfato')],
+         ctrl:[],
+         rule:'🗑️🪜 Metais pesados (Hg, Ni, Cu): descarte especial prioritário. Não lançar na pia.', rc:'rgba(120,140,160,0.16)', rt:'#aab8c8' },
+    F6:{ icon:'☠️', title:'Tóxicos leves & não identificados 🪜', short:'O-toluidina · dietilditiocarbamato · a identificar',
+         desc:'Tóxicos de menor risco e reagentes com nome em alemão ou não identificados. Manter segregado até identificação.',
+         reagents:[r('O-toluidina'), r('Dietilditiocarbamato de sódio'), r('Ditizona'), r('Indigo Blue padrão'), r('Formiato de sódio (Natriumformiat)'), r('Kristall Violett'), r('Reagentes a identificar')],
+         ctrl:[],
+         rule:'🪜🔒 Não identificados: NÃO usar até identificação. Etiquetar "A IDENTIFICAR".', rc:'rgba(192,96,255,0.12)', rt:'#d080ff' },
   };
 
-  // bottle heights per shelf (lower = taller/heavier)
-  const BOTTLE_SETS = { 6:[10,13,11], 5:[12,10,13], 4:[12,15,11], 3:[14,11,15], 2:[17,14,18], 1:[20,17,22] };
-
-  let activeWall = null;
+  const BOTTLE_H = { 6:[9,12,10], 5:[11,9,12], 4:[12,14,11], 3:[14,11,15], 2:[16,13,18], 1:[19,16,21] };
 
   function selectWall(wall) {
-    activeWall = wall;
     document.querySelectorAll('.wallbtn').forEach(b => b.classList.toggle('active', b.dataset.wall === wall));
     const wi = WALLS[wall];
-    document.getElementById('wallCaption').innerHTML = wi.icon + ' <strong style="color:'+wi.color+'">' + wi.name + '</strong> — ' + wi.cat;
-
+    document.getElementById('wallCaption').innerHTML = wi.icon + ' <strong style="color:'+wi.color+'">' + wi.name + '</strong>';
     const stack = document.getElementById('shelfStack');
     stack.style.display = 'block';
     document.getElementById('stackIcon').textContent = wi.icon;
     const st = document.getElementById('stackTitle');
-    st.textContent = wi.name + ' — ' + wi.cat;
-    st.style.color = wi.color;
-
+    st.textContent = wi.name; st.style.color = wi.color;
+    document.getElementById('stackNote').textContent = wi.note;
     const rows = document.getElementById('shelfRows');
     rows.innerHTML = '';
     [6,5,4,3,2,1].forEach(n => {
@@ -753,22 +813,30 @@
       const d = SHELF_DATA[key];
       if (!d) return;
       const easy = n <= 3;
+      const hasCtrl = d.ctrl && d.ctrl.length > 0;
       const row = document.createElement('div');
       row.className = 'shelf-row';
       row.style.setProperty('--sc', wi.color);
       row.dataset.key = key;
       row.onclick = () => showShelf(key);
-      const bottles = BOTTLE_SETS[n].map(h => `<i style="width:${5+Math.round(h/4)}px;height:${h}px;"></i>`).join('');
-      const accessTag = easy
-        ? '<span class="shelf-access" style="background:rgba(0,200,150,0.15);color:#40d8a0;">✓ fácil</span>'
-        : '<span class="shelf-access" style="background:rgba(255,184,74,0.15);color:#ffb84a;">🪜 escada</span>';
+      const bottles = BOTTLE_H[n].map(h => `<i style="width:${4+Math.round(h/4)}px;height:${h}px;"></i>`).join('');
+      const accessBadge = easy
+        ? '<span class="access-tag" style="background:rgba(0,200,150,0.15);color:#40d8a0;">✓ fácil</span>'
+        : '<span class="access-tag" style="background:rgba(255,184,74,0.15);color:#ffb84a;">🪜 escada</span>';
+      const ctrlBadge = hasCtrl
+        ? '<span class="access-tag" style="background:rgba(255,80,80,0.15);color:#ff7070;">🔒 PF</span>'
+        : '';
+      const ebBadge = d.ctrl && d.ctrl.some(c => c === EB)
+        ? '<span class="access-tag" style="background:rgba(255,153,0,0.15);color:#ff9900;">⚔️ EB</span>'
+        : '';
       row.innerHTML =
         '<div class="shelf-tag">P'+n+'</div>'
         + '<div class="shelf-row-body">'
-        +   '<div class="shelf-row-title">'+d.icon+' '+d.title.replace(/ 🪜$/,'')+'</div>'
+        +   '<div class="shelf-row-title">'+d.icon+' '+d.title.replace(/ 🪜$/,'').replace(' · PF','').replace(' · Exército','')
+        +     (hasCtrl || ebBadge ? ' '+ctrlBadge+ebBadge : '')+'</div>'
         +   '<div class="shelf-row-sub">'+d.short+'</div>'
         + '</div>'
-        + accessTag
+        + accessBadge
         + '<div class="shelf-bottles">'+bottles+'</div>';
       rows.appendChild(row);
     });
@@ -780,7 +848,8 @@
     document.querySelectorAll('.shelf-row').forEach(r => r.classList.toggle('active', r.dataset.key === key));
     const d = SHELF_DATA[key];
     if (!d) return;
-    const wi = WALLS[key[0]];
+    const wall = key[0];
+    const wi = WALLS[wall];
     const num = parseInt(key.slice(1));
     const easy = num <= 3;
     const panel = document.getElementById('shelfPanel');
@@ -789,24 +858,92 @@
     document.getElementById('pWall').textContent = wi.name + ' · P' + num;
     document.getElementById('pTitle').textContent = d.title.replace(/ 🪜$/,'');
     const b = document.getElementById('pBadge');
-    b.textContent = wi.cat; b.style.background = wi.bg; b.style.color = wi.color; b.style.border = '1px solid '+wi.color+'66';
+    b.textContent = easy ? '✓ ACESSO FÁCIL' : '🪜 REQUER ESCADA';
+    b.style.background = easy ? 'rgba(0,200,150,0.15)' : 'rgba(255,184,74,0.15)';
+    b.style.color = easy ? '#40d8a0' : '#ffb84a';
+    b.style.border = 'none';
+    // control badges
+    const pCtrl = document.getElementById('pCtrl');
+    pCtrl.innerHTML = '';
+    if (d.ctrl && d.ctrl.length) {
+      d.ctrl.forEach(c => {
+        const s = document.createElement('span');
+        s.className = 'ctrl-badge';
+        s.textContent = c.label;
+        s.style.background = c.bg;
+        s.style.color = c.color;
+        pCtrl.appendChild(s);
+      });
+      pCtrl.style.display = 'flex';
+    } else {
+      pCtrl.style.display = 'none';
+    }
     const acc = document.getElementById('pAccess');
-    if (easy) { acc.innerHTML = '✓ ACESSO FÁCIL'; acc.style.color = '#40d8a0'; }
-    else { acc.innerHTML = '🪜 REQUER ESCADA'; acc.style.color = '#ffb84a'; }
+    acc.textContent = ''; // already in badge
     document.getElementById('pDesc').textContent = d.desc;
     const rd = document.getElementById('pReagents');
     rd.innerHTML = '';
-    d.reagents.forEach(r => {
-      const c = document.createElement('span');
-      c.className = 'reagent-chip';
-      c.textContent = r;
-      c.style.cssText = 'background:'+wi.bg+';color:'+wi.color+';border:1px solid '+wi.color+'55;';
-      rd.appendChild(c);
+    d.reagents.forEach(reagent => {
+      const name = typeof reagent === 'string' ? reagent : reagent.name;
+      const ctrl = typeof reagent === 'object' ? reagent.ctrl : null;
+
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'display:inline-flex;align-items:center;gap:4px;margin:2px;';
+
+      const chip = document.createElement('span');
+      chip.className = 'reagent-chip';
+      chip.textContent = name;
+
+      if (ctrl === 'PF') {
+        chip.style.cssText = 'background:rgba(255,80,80,0.15);color:#ff8888;border:1px solid rgba(255,80,80,0.45);';
+        const badge = document.createElement('span');
+        badge.style.cssText = 'font-size:0.58rem;font-family:"Space Mono",monospace;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,80,80,0.22);color:#ff6666;border:1px solid rgba(255,80,80,0.5);white-space:nowrap;';
+        badge.textContent = '🔒 PF';
+        badge.title = 'Controlado PF — SIPROQUIM 2 (Portaria MJSP 204/2022)';
+        wrapper.appendChild(chip);
+        wrapper.appendChild(badge);
+      } else if (ctrl === 'EB') {
+        chip.style.cssText = 'background:rgba(255,153,0,0.15);color:#ffaa44;border:1px solid rgba(255,153,0,0.45);';
+        const badge = document.createElement('span');
+        badge.style.cssText = 'font-size:0.58rem;font-family:"Space Mono",monospace;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,153,0,0.22);color:#ff9900;border:1px solid rgba(255,153,0,0.5);white-space:nowrap;';
+        badge.textContent = '⚔️ EB';
+        badge.title = 'Controlado pelo Exército Brasileiro — SisFPC';
+        wrapper.appendChild(chip);
+        wrapper.appendChild(badge);
+      } else {
+        chip.style.cssText = 'background:'+wi.bg+';color:'+wi.color+';border:1px solid '+wi.color+'55;';
+        wrapper.appendChild(chip);
+      }
+
+      rd.appendChild(wrapper);
     });
     const rv = document.getElementById('pRule');
-    rv.textContent = d.rule; rv.style.background = d.rc; rv.style.color = d.rt; rv.style.border = '1px solid '+d.rt+'55';
+    rv.textContent = d.rule;
+    rv.style.background = d.rc;
+    rv.style.color = d.rt;
+    rv.style.border = '1px solid '+d.rt+'44';
     setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}), 80);
   }
 </script>
+<footer style="
+  margin-top: 40px;
+  padding: 24px 40px;
+  background: #161a22;
+  border-top: 1px solid #2a3040;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+">
+  <div>
+    <div style="font-size:0.65rem;font-family:'Space Mono',monospace;color:#7a8499;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Equipe</div>
+    <div style="font-size:0.85rem;color:#e8ecf4;font-weight:600;">João Marcos L. Alves · Maria Beatriz V. Brockhof · Leticia Miranda</div>
+  </div>
+  <div style="font-size:0.7rem;color:#7a8499;font-family:'Space Mono',monospace;">
+    NADF · UNIFENAS · 2026
+  </div>
+</footer>
+
 </body>
 </html>
