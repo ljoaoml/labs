@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organização de Reagentes — Laboratório</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a22;
+    --surface2: #1e2430;
+    --border: #2a3040;
+    --text: #e8ecf4;
+    --muted: #7a8499;
+    --accent: #00c896;
+    --accent2: #4a9eff;
+    --warn: #ffb84a;
+    --danger: #ff5757;
+
+    --inflamavel: #ff6b2b;
+    --corrosivo: #e8b800;
+    --oxidante: #ff9100;
+    --toxico: #c060ff;
+    --base: #4a9eff;
+    --acido: #ff4a7a;
+    --bio: #00c896;
+    --inerte: #7a8499;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  header h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  header span {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    margin-left: auto;
+  }
+
+  /* NAV TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 20px 40px 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* MAIN */
+  main { max-width: 1100px; margin: 0 auto; padding: 40px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 0.7rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .card h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .card p { color: var(--muted); font-size: 0.9rem; }
+
+  /* CLASSES GRID */
+  .classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .class-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .class-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .class-card:hover { transform: translateY(-2px); border-color: #3a4455; }
+  .class-card .emoji { font-size: 2rem; margin-bottom: 10px; display: block; }
+  .class-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }
+  .class-card p { font-size: 0.78rem; color: var(--muted); }
+  .class-card .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-family: 'Space Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .c-inflamavel::before { background: var(--inflamavel); }
+  .c-inflamavel .badge { background: rgba(255,107,43,0.15); color: var(--inflamavel); }
+
+  .c-corrosivo::before { background: var(--corrosivo); }
+  .c-corrosivo .badge { background: rgba(232,184,0,0.15); color: var(--corrosivo); }
+
+  .c-oxidante::before { background: var(--oxidante); }
+  .c-oxidante .badge { background: rgba(255,145,0,0.15); color: var(--oxidante); }
+
+  .c-toxico::before { background: var(--toxico); }
+  .c-toxico .badge { background: rgba(192,96,255,0.15); color: var(--toxico); }
+
+  .c-base::before { background: var(--base); }
+  .c-base .badge { background: rgba(74,158,255,0.15); color: var(--base); }
+
+  .c-acido::before { background: var(--acido); }
+  .c-acido .badge { background: rgba(255,74,122,0.15); color: var(--acido); }
+
+  .c-bio::before { background: var(--bio); }
+  .c-bio .badge { background: rgba(0,200,150,0.15); color: var(--bio); }
+
+  .c-inerte::before { background: var(--inerte); }
+  .c-inerte .badge { background: rgba(122,132,153,0.15); color: var(--inerte); }
+
+  /* INCOMPATIBILITY TABLE */
+  .matrix-wrap { overflow-x: auto; margin-top: 20px; }
+  table.matrix {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.8rem;
+    min-width: 600px;
+  }
+  table.matrix th, table.matrix td {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: center;
+  }
+  table.matrix th {
+    background: var(--surface2);
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+  table.matrix td.ok { background: rgba(0,200,150,0.12); color: var(--bio); font-weight: 700; }
+  table.matrix td.warn { background: rgba(255,184,74,0.12); color: var(--warn); font-weight: 700; }
+  table.matrix td.no { background: rgba(255,87,87,0.15); color: var(--danger); font-weight: 700; }
+  table.matrix td.na { background: var(--surface2); color: var(--muted); }
+  table.matrix .row-label {
+    text-align: left;
+    font-weight: 600;
+    background: var(--surface2);
+    font-size: 0.75rem;
+  }
+
+  .legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--muted); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+  /* SHELF LAYOUT */
+  .shelf-viz {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 20px;
+  }
+  .shelf-title {
+    font-size: 0.7rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .room-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .corner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    min-height: 160px;
+  }
+  .corner-label {
+    font-size: 0.65rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .corner h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+  .shelf-list { list-style: none; }
+  .shelf-list li {
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .shelf-list li:last-child { border-bottom: none; }
+  .shelf-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    background: var(--surface2);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--muted);
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .room-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+    grid-column: 1 / -1;
+    background: transparent;
+  }
+
+  .c1 { border-top: 2px solid var(--danger); }
+  .c2 { border-top: 2px solid var(--toxico); }
+  .c3 { border-top: 2px solid var(--inflamavel); }
+  .c4 { border-top: 2px solid var(--accent2); }
+
+  /* RULES LIST */
+  .rules-list { list-style: none; margin-top: 16px; }
+  .rules-list li {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    align-items: flex-start;
+  }
+  .rules-list li:last-child { border-bottom: none; }
+  .rule-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    min-width: 28px;
+    padding-top: 2px;
+  }
+  .rule-text strong { color: var(--text); display: block; margin-bottom: 2px; }
+  .rule-text span { color: var(--muted); font-size: 0.82rem; }
+
+  /* NORMAS */
+  .norma-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .norma-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+  .norma-card p { font-size: 0.8rem; color: var(--muted); }
+  .norma-tag {
+    font-size: 0.65rem;
+    font-family: 'Space Mono', monospace;
+    background: rgba(74,158,255,0.12);
+    color: var(--accent2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+
+  /* ALERT BOX */
+  .alert {
+    background: rgba(255,87,87,0.08);
+    border: 1px solid rgba(255,87,87,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.83rem;
+    color: #ff8a8a;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  .alert-info {
+    background: rgba(74,158,255,0.08);
+    border-color: rgba(74,158,255,0.25);
+    color: #8abfff;
+  }
+
+  /* PAGE TITLE */
+  .page-hero {
+    margin-bottom: 32px;
+  }
+  .page-hero .eyebrow {
+    font-size: 0.7rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .page-hero h2 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .page-hero p { color: var(--muted); max-width: 560px; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin-top: 16px; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .check-done { background: rgba(0,200,150,0.15); color: var(--accent); }
+  .check-warn { background: rgba(255,184,74,0.15); color: var(--warn); }
+
+  @media (max-width: 640px) {
+    main { padding: 20px; }
+    header { padding: 16px 20px; }
+    .tabs { padding: 16px 20px 0; }
+    .room-grid { grid-template-columns: 1fr; }
+    .page-hero h2 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">🧪</div>
+  <div>
+    <h1>Organização de Reagentes</h1>
+  </div>
+  <span>ABNT · ANVISA · NR-26</span>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('classes')">Classes de Risco</button>
+  <button class="tab" onclick="showTab('incompatibilidade')">Incompatibilidades</button>
+  <button class="tab" onclick="showTab('layout')">Layout das Prateleiras</button>
+  <button class="tab" onclick="showTab('regras')">Regras de Armazenamento</button>
+  <button class="tab" onclick="showTab('normas')">Normas Brasileiras</button>
+</div>
+
+<main>
+
+  <!-- CLASSES DE RISCO -->
+  <section id="classes" class="section active">
+    <div class="page-hero">
+      <div class="eyebrow">01 / CLASSIFICAÇÃO</div>
+      <h2>Classes de Perigo dos Reagentes</h2>
+      <p>Baseado no GHS (Sistema Globalmente Harmonizado) adotado pelo Brasil via ABNT NBR 14725 e ANVISA.</p>
+    </div>
+    <div class="classes-grid">
+      <div class="class-card c-inflamavel">
+        <span class="emoji">🔥</span>
+        <h3>Inflamáveis e Combustíveis</h3>
+        <p>Etanol, acetona, éter etílico, metanol, hexano. Ponto de fulgor abaixo de 60°C.</p>
+        <span class="badge">CLASSE 3</span>
+      </div>
+      <div class="class-card c-corrosivo">
+        <span class="emoji">⚗️</span>
+        <h3>Corrosivos</h3>
+        <p>Ácido sulfúrico concentrado, hidróxido de sódio, ácido clorídrico, ácido nítrico concentrado.</p>
+        <span class="badge">CLASSE 8</span>
+      </div>
+      <div class="class-card c-oxidante">
+        <span class="emoji">💥</span>
+        <h3>Oxidantes</h3>
+        <p>Permanganato de potássio, peróxido de hidrogênio concentrado, nitrato de amônio, persulfatos.</p>
+        <span class="badge">CLASSE 5.1</span>
+      </div>
+      <div class="class-card c-toxico">
+        <span class="emoji">☠️</span>
+        <h3>Tóxicos e Venenosos</h3>
+        <p>Cloreto de mercúrio, cianetos, compostos organofosforados, arsênio e seus sais.</p>
+        <span class="badge">CLASSE 6.1</span>
+      </div>
+      <div class="class-card c-acido">
+        <span class="emoji">🧫</span>
+        <h3>Ácidos (não corrosivos)</h3>
+        <p>Ácido acético diluído, ácido bórico, ácido cítrico, ácido fosfórico diluído.</p>
+        <span class="badge">ÁCIDO / pH &lt; 7</span>
+      </div>
+      <div class="class-card c-base">
+        <span class="emoji">🔵</span>
+        <h3>Bases / Álcalis</h3>
+        <p>Hidróxido de amônio, carbonato de sódio, bicarbonato, hidróxido de potássio diluído.</p>
+        <span class="badge">BASE / pH &gt; 7</span>
+      </div>
+      <div class="class-card c-bio">
+        <span class="emoji">🦠</span>
+        <h3>Biológicos / Radioativos</h3>
+        <p>Material biológico, culturas, amostras clínicas. Área segregada e sinalizada.</p>
+        <span class="badge">CLASSE 6.2</span>
+      </div>
+      <div class="class-card c-inerte">
+        <span class="emoji">🧂</span>
+        <h3>Sólidos Inertes</h3>
+        <p>Cloreto de sódio, sacarose, amido, agar, sulfato de cobre anidro (baixa periculosidade).</p>
+        <span class="badge">BAIXO RISCO</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INCOMPATIBILIDADES -->
+  <section id="incompatibilidade" class="section">
+    <div class="page-hero">
+      <div class="eyebrow">02 / INCOMPATIBILIDADES</div>
+      <h2>Matriz de Incompatibilidade</h2>
+      <p>Reagentes com ❌ NUNCA devem ser armazenados no mesmo armário ou prateleira.</p>
+    </div>
+    <div class="alert">
+      ⚠️ <span>Incompatibilidades geram risco de explosão, incêndio, liberação de gases tóxicos e reações descontroladas. Respeite rigorosamente esta matriz.</span>
+    </div>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>🔥 Inflamável</th>
+            <th>⚗️ Corrosivo</th>
+            <th>💥 Oxidante</th>
+            <th>☠️ Tóxico</th>
+            <th>🧫 Ácido</th>
+            <th>🔵 Base</th>
+            <th>🧂 Inerte</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label">🔥 Inflamável</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="no">❌</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="warn">⚠️</td>
+            <td class="ok">✓</td>
+          </tr>
+          <tr>
+            <td class="row-label">⚗️ Corrosivo</td>
+            <td class="no">❌</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="no">❌</td>
+            <td class="warn">⚠️</td>
+          </tr>
+          <tr>
+            <td class="row-label">💥 Oxidante</td>
+            <td class="no">❌</td>
+            <td class="no">❌</td>
+            <td class="ok">✓</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="no">❌</td>
+            <td class="ok">✓</td>
+          </tr>
+          <tr>
+            <td class="row-label">☠️ Tóxico</td>
+            <td class="warn">⚠️</td>
+            <td class="warn">⚠️</td>
+            <td class="warn">⚠️</td>
+            <td class="warn">⚠️</td>
+            <td class="warn">⚠️</td>
+            <td class="warn">⚠️</td>
+            <td class="ok">✓</td>
+          </tr>
+          <tr>
+            <td class="row-label">🧫 Ácido</td>
+            <td class="no">❌</td>
+            <td class="no">❌</td>
+            <td class="no">❌</td>
+            <td class="warn">⚠️</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="ok">✓</td>
+          </tr>
+          <tr>
+            <td class="row-label">🔵 Base</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="no">❌</td>
+            <td class="warn">⚠️</td>
+            <td class="no">❌</td>
+            <td class="ok">✓</td>
+            <td class="ok">✓</td>
+          </tr>
+          <tr>
+            <td class="row-label">🧂 Inerte</td>
+            <td class="ok">✓</td>
+            <td class="warn">⚠️</td>
+            <td class="ok">✓</td>
+            <td class="ok">✓</td>
+            <td class="ok">✓</td>
+            <td class="ok">✓</td>
+            <td class="ok">✓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> ✓ Compatível — pode compartilhar espaço</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div> ⚠️ Cautela — segregar com bandeja ou distância</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div> ❌ Incompatível — NUNCA juntos</div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <div class="card-title">Exemplos Críticos de Incompatibilidade</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">!</span><div class="rule-text"><strong>Ácidos + Bases</strong><span>Reação exotérmica violenta, liberação de calor e vapores. Ácido clorídrico + hidróxido de sódio: altamente perigoso se misturado acidentalmente.</span></div></li>
+        <li><span class="rule-num">!</span><div class="rule-text"><strong>Oxidantes + Inflamáveis</strong><span>Permanganato de potássio + etanol = risco de ignição espontânea. Nunca na mesma prateleira ou armário.</span></div></li>
+        <li><span class="rule-num">!</span><div class="rule-text"><strong>Ácido Nítrico + Compostos Orgânicos</strong><span>Risco de explosão. O ácido nítrico deve ser isolado de qualquer inflamável ou material orgânico.</span></div></li>
+        <li><span class="rule-num">!</span><div class="rule-text"><strong>Cianetos + Ácidos</strong><span>Liberação de ácido cianídrico (HCN), gás extremamente tóxico. Separação absoluta obrigatória.</span></div></li>
+        <li><span class="rule-num">!</span><div class="rule-text"><strong>Peróxidos + Tudo</strong><span>Peróxidos orgânicos são instáveis. Armazenar em local refrigerado, isolado, longe de calor e fontes de ignição.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAYOUT -->
+  <section id="layout" class="section">
+    <div class="page-hero">
+      <div class="eyebrow">03 / DISTRIBUIÇÃO FÍSICA</div>
+      <h2>Layout dos 4 Cantos da Parede</h2>
+      <p>Distribuição baseada em incompatibilidades, frequência de uso e normas de acesso seguro. Cada canto = armário dedicado.</p>
+    </div>
+
+    <div class="alert alert-info">
+      ℹ️ <span>Separe os cantos de acordo com a classe de risco. Nunca armazene reagentes incompatíveis no mesmo canto, mesmo que em prateleiras diferentes.</span>
+    </div>
+
+    <div class="shelf-viz">
+      <div class="shelf-title">VISTA SUPERIOR DO LABORATÓRIO — DISTRIBUIÇÃO POR CANTO</div>
+      <div class="room-grid">
+
+        <div class="corner c1">
+          <div class="corner-label">Canto A — Parede Esquerda/Frente</div>
+          <h4>🔥 Inflamáveis</h4>
+          <ul class="shelf-list">
+            <li><span class="shelf-num">P1</span> Solventes orgânicos (etanol, metanol)</li>
+            <li><span class="shelf-num">P2</span> Acetona, éter, hexano</li>
+            <li><span class="shelf-num">P3</span> Álcoois combustíveis</li>
+            <li><span class="shelf-num">P4</span> Tolueno, xileno</li>
+            <li><span class="shelf-num">P5</span> <em style="color:var(--muted)">Reserva / menor risco</em></li>
+          </ul>
+          <p style="font-size:0.72rem;color:var(--danger);margin-top:8px">⚡ Armário antichama obrigatório · longe de janelas</p>
+        </div>
+
+        <div class="corner c2">
+          <div class="corner-label">Canto B — Parede Direita/Frente</div>
+          <h4>☠️ Tóxicos + 💥 Oxidantes</h4>
+          <ul class="shelf-list">
+            <li><span class="shelf-num">P1</span> Oxidantes sólidos (KMnO₄, nitratos)</li>
+            <li><span class="shelf-num">P2</span> Oxidantes líquidos (H₂O₂ concentrado)</li>
+            <li><span class="shelf-num">P3</span> Tóxicos sólidos (sais de mercúrio)</li>
+            <li><span class="shelf-num">P4</span> Tóxicos líquidos (segregados)</li>
+            <li><span class="shelf-num">P5</span> Cianetos em cofre interno</li>
+          </ul>
+          <p style="font-size:0.72rem;color:var(--toxico);margin-top:8px">🔒 Acesso restrito · registro de uso obrigatório</p>
+        </div>
+
+        <div class="corner c3">
+          <div class="corner-label">Canto C — Parede Esquerda/Fundo</div>
+          <h4>⚗️ Ácidos Concentrados</h4>
+          <ul class="shelf-list">
+            <li><span class="shelf-num">P1</span> HCl, H₂SO₄ (em bandejas)</li>
+            <li><span class="shelf-num">P2</span> HNO₃ (isolado dos demais)</li>
+            <li><span class="shelf-num">P3</span> Ácido acético glacial</li>
+            <li><span class="shelf-num">P4</span> Ácidos diluídos / baixo risco</li>
+            <li><span class="shelf-num">P5</span> Tampões e soluções-padrão</li>
+          </ul>
+          <p style="font-size:0.72rem;color:var(--corrosivo);margin-top:8px">🪣 Bandejas de contenção em todas as prateleiras</p>
+        </div>
+
+        <div class="corner c4">
+          <div class="corner-label">Canto D — Parede Direita/Fundo</div>
+          <h4>🔵 Bases + 🧂 Inertes</h4>
+          <ul class="shelf-list">
+            <li><span class="shelf-num">P1</span> Bases sólidas (NaOH, KOH)</li>
+            <li><span class="shelf-num">P2</span> Bases líquidas (NH₄OH)</li>
+            <li><span class="shelf-num">P3</span> Sais inertes (NaCl, sacarose)</li>
+            <li><span class="shelf-num">P4</span> Reagentes para cultura/biologia</li>
+            <li><span class="shelf-num">P5</span> Indicadores, corantes, reagentes gerais</span></li>
+          </ul>
+          <p style="font-size:0.72rem;color:var(--accent2);margin-top:8px">✅ Menor risco — mais acessível para uso rotineiro</p>
+        </div>
+
+      </div>
+
+      <div style="margin-top:20px; background:var(--surface); border:1px dashed var(--border); border-radius:8px; padding:16px; text-align:center; font-size:0.8rem; color:var(--muted)">
+        🚪 <strong>Centro do lab / Bancada de trabalho</strong><br>
+        Exaustão local, equipamentos de segurança, EPI, chuveiro de emergência e lava-olhos próximos
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <div class="card-title">Princípios de distribuição nas prateleiras (P1–P5)</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">P1</span><div class="rule-text"><strong>Prateleira 1 (altura dos olhos / mais acessível)</strong><span>Reagentes de uso frequente e menor periculosidade. Facilita manuseio seguro sem escadas.</span></div></li>
+        <li><span class="rule-num">P2</span><div class="rule-text"><strong>Prateleira 2 (abaixo dos olhos)</strong><span>Reagentes de uso frequente com periculosidade moderada.</span></div></li>
+        <li><span class="rule-num">P3</span><div class="rule-text"><strong>Prateleira 3 (altura do peito)</strong><span>Reagentes de uso regular. Recipientes mais pesados devem ficar nesta altura.</span></div></li>
+        <li><span class="rule-num">P4</span><div class="rule-text"><strong>Prateleira 4 (altura da cintura/joelho)</strong><span>Recipientes grandes, pesados. Facilita movimentação com carrinho. Nunca ácidos/bases no alto.</span></div></li>
+        <li><span class="rule-num">P5</span><div class="rule-text"><strong>Prateleira 5 (mais baixa)</strong><span>Reserva, estoques maiores, reagentes raramente usados. Acesso menos frequente.</span></div></li>
+      </ul>
+      <div class="alert" style="margin-top:16px; margin-bottom:0">
+        ⚠️ <span>Ácidos e bases concentrados NUNCA devem ser armazenados no alto (P1). O risco de queda e acidente com respingo é elevado. Sempre nas prateleiras P3 ou P4, com bandeja de contenção.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGRAS -->
+  <section id="regras" class="section">
+    <div class="page-hero">
+      <div class="eyebrow">04 / BOAS PRÁTICAS</div>
+      <h2>Regras de Armazenamento</h2>
+      <p>Checklist completo para conformidade com as normas brasileiras de segurança química em laboratórios.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Checklist de Conformidade</div>
+      <ul class="checklist">
+        <li><span class="check-icon check-done">✓</span><div><strong>Identificação completa</strong><br><span style="color:var(--muted);font-size:0.82rem">Todo frasco deve ter rótulo com nome, concentração, data de abertura, validade, pictogramas GHS e frases de perigo (H) e precaução (P). Conforme ABNT NBR 14725-4.</span></div></li>
+        <li><span class="check-icon check-done">✓</span><div><strong>FDS (Ficha de Dados de Segurança) acessível</strong><br><span style="color:var(--muted);font-size:0.82rem">Cada reagente deve ter a FDS disponível no laboratório (física ou digital), conforme NR-26 e ABNT NBR 14725-2.</span></div></li>
+        <li><span class="check-icon check-done">✓</span><div><strong>Bandejas de contenção</strong><br><span style="color:var(--muted);font-size:0.82rem">Ácidos, bases e líquidos perigosos devem ser armazenados em bandejas de contenção com capacidade ≥ 10% do volume total armazenado.</span></div></li>
+        <li><span class="check-icon check-done">✓</span><div><strong>Temperatura e ventilação</strong><br><span style="color:var(--muted);font-size:0.82rem">Inflamáveis: local ventilado, longe de fontes de calor e faíscas. Reagentes fotossensíveis: frascos âmbar, longe de luz direta.</span></div></li>
+        <li><span class="check-icon check-done">✓</span><div><strong>Quantidade máxima no laboratório</strong><br><span style="color:var(--muted);font-size:0.82rem">O estoque no laboratório deve ser mínimo (uso do dia/semana). Grandes volumes devem ficar em almoxarifado específico com maior segurança.</span></div></li>
+        <li><span class="check-icon check-done">✓</span><div><strong>Controle de estoque e registro</strong><br><span style="color:var(--muted);font-size:0.82rem">Manter livro de controle ou sistema digital de entrada/saída. Substâncias controladas (ANVISA/Polícia Federal) exigem registro especial.</span></div></li>
+        <li><span class="check-icon check-done">✓</span><div><strong>Sinalização dos armários</strong><br><span style="color:var(--muted);font-size:0.82rem">Cada armário/canto deve ter os pictogramas de perigo dos reagentes armazenados fixados externamente, visíveis sem abrir.</span></div></li>
+        <li><span class="check-icon check-warn">⚠️</span><div><strong>Aterramento para inflamáveis</strong><br><span style="color:var(--muted);font-size:0.82rem">Armários de inflamáveis devem ser aterrados elétrica e mecanicamente. Instalação elétrica à prova de explosão (ATEX) na área.</span></div></li>
+        <li><span class="check-icon check-warn">⚠️</span><div><strong>Vencimento e descarte</strong><br><span style="color:var(--muted);font-size:0.82rem">Inspecionar validade mensalmente. Resíduos químicos devem ser descartados conforme CONAMA 358/2005 e legislação estadual. Nunca descartar no esgoto.</span></div></li>
+        <li><span class="check-icon check-warn">⚠️</span><div><strong>EPI disponível no acesso</strong><br><span style="color:var(--muted);font-size:0.82rem">Jaleco, luvas e óculos de proteção devem estar acessíveis ANTES de chegar às prateleiras. Lava-olhos a no máximo 10 segundos de caminhada.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Reagentes que exigem atenção especial</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">🔒</span><div class="rule-text"><strong>Precursores controlados (ANVISA/PF)</strong><span>Acetona, éter, ácido clorídrico, permanganato de potássio e outros exigem autorização e registro de uso. Lei 10.357/2001.</span></div></li>
+        <li><span class="rule-num">❄️</span><div class="rule-text"><strong>Reagentes que precisam de refrigeração</strong><span>Anticorpos, enzimas, certas soluções-tampão: geladeira exclusiva para reagentes, nunca para alimentos.</span></div></li>
+        <li><span class="rule-num">💧</span><div class="rule-text"><strong>Reagentes sensíveis à umidade</strong><span>Cloreto de cálcio anidro, pentóxido de fósforo, hidretos metálicos: armazenar em dessecador ou frasco bem vedado com sílica gel.</span></div></li>
+        <li><span class="rule-num">☢️</span><div class="rule-text"><strong>Peróxidos formadores</strong><span>Éter etílico, THF, dioxano formam peróxidos ao envelhecer. Datar abertura, usar em até 3 meses e testar com fita de peróxido antes do uso.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NORMAS -->
+  <section id="normas" class="section">
+    <div class="page-hero">
+      <div class="eyebrow">05 / LEGISLAÇÃO</div>
+      <h2>Normas Brasileiras Aplicáveis</h2>
+      <p>Regulamentações que regem o armazenamento e manuseio de reagentes em laboratórios no Brasil.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">ABNT NBR 14725</span>
+      <h4>Produtos Químicos — Informações sobre Segurança, Saúde e Meio Ambiente</h4>
+      <p>Define os requisitos para rotulagem e ficha de dados de segurança (FDS) de produtos químicos, adotando o GHS. Partes 1 a 4 cobrem terminologia, FDS, rotulagem e pictogramas.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">NR-26 / MTE</span>
+      <h4>Sinalização de Segurança</h4>
+      <p>Norma Regulamentadora do Ministério do Trabalho que estabelece a sinalização de segurança em ambientes de trabalho, incluindo laboratórios, definindo cores e símbolos para produtos químicos perigosos.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">ABNT NBR 12235</span>
+      <h4>Armazenamento de Resíduos Sólidos Perigosos</h4>
+      <p>Estabelece condições exigíveis para armazenamento de resíduos sólidos perigosos, de forma a proteger a saúde pública e o meio ambiente.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">ANVISA RDC 222/2018</span>
+      <h4>Gerenciamento de Resíduos de Serviços de Saúde</h4>
+      <p>Regulamenta as boas práticas de gerenciamento dos resíduos de serviços de saúde, incluindo reagentes de laboratório clínico.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">Lei 10.357/2001</span>
+      <h4>Controle de Precursores Químicos</h4>
+      <p>Estabelece normas de controle e fiscalização sobre produtos químicos que direta ou indiretamente possam ser destinados à elaboração de substâncias entorpecentes. Regulamentada pela ANVISA e Polícia Federal.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">CONAMA 358/2005</span>
+      <h4>Tratamento e Disposição de Resíduos de Saúde</h4>
+      <p>Dispõe sobre o tratamento e a disposição final dos resíduos dos serviços de saúde, incluindo reagentes e produtos químicos descartados.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">ABNT NBR 7195</span>
+      <h4>Cores para Segurança</h4>
+      <p>Define as cores de segurança e sua aplicação, incluindo a identificação de substâncias perigosas no ambiente de trabalho.</p>
+    </div>
+
+    <div class="norma-card">
+      <span class="norma-tag">NR-9 / PPRA</span>
+      <h4>Programa de Prevenção de Riscos Ambientais</h4>
+      <p>Obrigatório para laboratórios com exposição a agentes químicos. Deve identificar, avaliar e controlar riscos químicos no ambiente de trabalho.</p>
+    </div>
+
+    <div class="card" style="margin-top:8px">
+      <div class="card-title">Dica de conformidade</div>
+      <h2 style="font-size:1rem; margin-bottom:8px">Por onde começar?</h2>
+      <ol style="padding-left:20px; color:var(--muted); font-size:0.85rem; line-height:2">
+        <li>Faça o inventário completo de todos os reagentes</li>
+        <li>Solicite as FDS de cada produto ao fornecedor</li>
+        <li>Classifique cada reagente conforme GHS/ABNT NBR 14725</li>
+        <li>Aplique a matriz de incompatibilidade para definir a disposição</li>
+        <li>Sinalizar cada armário com os pictogramas corretos</li>
+        <li>Treine a equipe e mantenha o PPRA atualizado (NR-9)</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
