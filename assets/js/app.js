@@ -8,20 +8,6 @@
     throw new Error('data.js não carregado — execução interrompida.');
   }
 
-  function toggleCard(card) {
-    const isExpanded = card.classList.contains('expanded');
-    document.querySelectorAll('.class-card.expanded').forEach(c => {
-      c.classList.remove('expanded');
-      const hint = c.querySelector('.expand-hint');
-      if (hint) hint.textContent = '▼ clique para expandir';
-    });
-    if (!isExpanded) {
-      card.classList.add('expanded');
-      const hint = card.querySelector('.expand-hint');
-      if (hint) hint.textContent = '▲ clique para retrair';
-    }
-  }
-
   function openClassDrawer(id, ev) {
     const d = CLASS_DRAWER_DATA[id];
     if (!d) return;
@@ -229,7 +215,7 @@
 
     container.style.display = 'block';
     if (!matches.length) {
-      container.innerHTML = '<div class="search-empty">Nenhum reagente encontrado.</div>';
+      container.innerHTML = '<div class="search-empty"><span class="se-icon">📦</span><span>Nenhum reagente encontrado.</span><span class="se-hint">Tente outra parede ou limpe os filtros.</span></div>';
       return;
     }
 
@@ -299,9 +285,8 @@
     
     const stack = document.getElementById('shelfStack');
     
-    // UX REWRITE: Remove and trigger CSS transition class cleanly
     stack.classList.remove('fade-in-up');
-    void stack.offsetWidth; // Force CSS reflow
+    void stack.offsetWidth;
     stack.style.display = 'block';
     stack.classList.add('fade-in-up');
 
@@ -368,9 +353,8 @@
     const easy = num <= 3;
     const panel = document.getElementById('shelfPanel');
     
-    // UX REWRITE: Trigger clean transition on the details panel
     panel.classList.remove('fade-in-up');
-    void panel.offsetWidth; // Force CSS reflow
+    void panel.offsetWidth;
     panel.style.display = 'block';
     panel.classList.add('fade-in-up');
 
@@ -485,11 +469,13 @@
     });
 
     if (matches.length === 0) {
-      container.innerHTML = '<div class="search-empty">Nenhuma substância encontrada. Tente outro nome ou fórmula.</div>';
+      container.innerHTML = '<div class="search-empty"><span class="se-icon">🔬</span><span>Nenhuma substância encontrada.</span><span class="se-hint">Tente outro nome, fórmula química (ex: C₂H₅OH) ou número CAS.</span></div>';
       return;
     }
 
-    const grid = matches.slice(0, 40).map(m => `
+    const grid = matches.slice(0, 40).map(m => {
+      const panelId = 'casp-' + m.cas.replace(/-/g, '');
+      return `
       <div class="cas-card">
         <div class="cas-card-top">
           <span class="cas-card-name">${m.name}</span>
@@ -497,16 +483,19 @@
         </div>
         <div class="cas-card-bottom">
           <span class="cas-number">🔢 ${m.cas}</span>
-          <button class="cas-copy-btn" onclick="navigator.clipboard.writeText('${m.cas}').then(()=>{this.textContent='✓ Copiado!';setTimeout(()=>this.textContent='Copiar CAS',1500)})">Copiar CAS</button>
+          <div class="cas-card-actions">
+            <button class="cas-copy-btn" onclick="navigator.clipboard.writeText('${m.cas}').then(()=>{this.textContent='✓ Copiado!';setTimeout(()=>this.textContent='Copiar CAS',1500)})">Copiar CAS</button>
+            <button class="cas-pubchem-btn" id="btn-${panelId}" onclick="toggleCasPubChem('${m.cas}','${panelId}',this)">📊 PubChem</button>
+          </div>
         </div>
-      </div>
-    `).join('');
+        <div class="cas-pc-panel" id="${panelId}" style="display:none"></div>
+      </div>`;
+    }).join('');
 
     const countNote = matches.length > 40 ? `<div class="cas-count-note">Mostrando 40 de ${matches.length} resultados. Refine a busca para ver mais.</div>` : '';
     container.innerHTML = `<div class="cas-grid">${grid}</div>${countNote}`;
   }
 
-  // SEARCH ENGINE CORE LOGIC - ROBUST AND ABSOLUTELY INDEPENDENT
   function performReagentSearch() {
     const rawQ = document.getElementById('reagentSearchInput').value.trim();
     const container = document.getElementById('searchResultWrapper');
@@ -565,7 +554,9 @@
       container.style.display = 'flex';
       const noResult = document.createElement('div');
       noResult.className = 'search-empty-block';
-      noResult.textContent = 'Nenhum reagente encontrado com esse termo.';
+      noResult.innerHTML = '<span class="se-icon">🔍</span>'
+        + `<span>Nenhum reagente encontrado para <strong>"${rawQ}"</strong>.</span>`
+        + '<span class="se-hint">Tente um nome alternativo, fórmula (ex: H₂SO₄) ou abreviação.</span>';
       container.appendChild(noResult);
       return;
     }
@@ -620,16 +611,17 @@
 
   (function initMatrixTooltips() {
     const tt = document.getElementById('matrixTooltip');
-    const rows = ['Inflamável','Corrosivo','Oxidante','Tóxico','Ácido','Base','Inerte'];
-    document.querySelectorAll('table.matrix td.no, table.matrix td.warn').forEach(cell => {
+    document.querySelectorAll('table.matrix td.no, table.matrix td.warn, table.matrix td.ok').forEach(cell => {
       const tr = cell.parentElement;
       const colIdx = Array.from(cell.parentElement.cells).indexOf(cell);
-      const rowLabel = tr.cells[0].textContent.replace(/[^\w\s]/gu,'').trim().split(' ').pop();
-      const colLabel = document.querySelectorAll('table.matrix thead th')[colIdx]?.textContent.replace(/[^\w\s]/gu,'').trim().split(' ').pop() || '';
+      // \p{L} (Unicode letters) preserva acentos como Á, ó, á que \w ignora
+      const rowLabel = tr.cells[0].textContent.replace(/[^\p{L}\s]/gu,'').trim().split(/\s+/).pop();
+      const colLabel = (document.querySelectorAll('table.matrix thead th')[colIdx]?.textContent || '').replace(/[^\p{L}\s]/gu,'').trim().split(/\s+/).pop();
       const key1 = rowLabel + '-' + colLabel;
       const key2 = colLabel + '-' + rowLabel;
       const info = MATRIX_INFO[key1] || MATRIX_INFO[key2];
       if (!info) return;
+
       cell.addEventListener('mousemove', e => {
         document.getElementById('ttTitle').textContent = info.title;
         document.getElementById('ttBody').textContent  = info.body;
@@ -655,14 +647,40 @@
     if (w && w.innerHTML.trim()) w.style.display = 'flex';
   });
 
-  // ── Deep linking: abre a aba correta a partir do hash da URL ──────────────
+  // ── Deep linking: abre aba + restaura reagente pesquisado a partir da URL ──
+  // Formato: #emergencias?q=Acetona&s=emerg  |  #descarte?q=Etanol&s=descarte
   (function() {
-    const VALID_TABS = ['classes','incompatibilidade','maquete','cas','regras','normas'];
-    const hash = location.hash.slice(1);
-    if (hash && VALID_TABS.includes(hash)) {
+    const VALID_TABS = ['classes','incompatibilidade','maquete','cas','regras','normas','emergencias','descarte'];
+    const full  = location.hash.slice(1);           // ex: "emergencias?q=Acetona&s=emerg"
+    const [tabId, qs] = full.split('?');
+
+    if (tabId && VALID_TABS.includes(tabId)) {
       const btn = Array.from(document.querySelectorAll('.tab'))
-        .find(b => (b.getAttribute('onclick') || '').includes("'" + hash + "'"));
-      showTab(hash, btn || null);
+        .find(b => (b.getAttribute('onclick') || '').includes("'" + tabId + "'"));
+      showTab(tabId, btn || null);
+    }
+
+    // Restaurar reagente se houver query string
+    if (qs) {
+      const params = new URLSearchParams(qs);
+      const q = params.get('q');
+      const s = params.get('s');
+      if (q && s && (s === 'emerg' || s === 'descarte')) {
+        setTimeout(() => {
+          const input = document.getElementById(s + 'SearchInput');
+          if (!input) return;
+          input.value = q;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          // Aguarda dropdown renderizar e seleciona match exato ou primeiro resultado
+          setTimeout(() => {
+            const dd = document.getElementById(s + 'SearchDropdown');
+            if (!dd) return;
+            const exact = [...dd.querySelectorAll('.qsearch-opt')]
+              .find(o => o.querySelector('.qsearch-opt-name')?.textContent === q);
+            (exact || dd.querySelector('.qsearch-opt'))?.click();
+          }, 120);
+        }, 200);
+      }
     }
   })();
 
@@ -682,3 +700,615 @@
       wrap.classList.toggle('has-overflow', !atEnd);
     });
   })();
+
+  // ── QUICK-SEARCH — busca de reagentes nas abas Emergências e Descarte ────
+
+  // Normaliza strings para comparação: sem acento, minúsculas, sem símbolos químicos problemáticos
+  function normalizeQSearch(s) {
+    const subs = {'₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9'};
+    return String(s || '')
+      .replace(/[₀-₉]/g, c => subs[c] || c)
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function reagentSearch(input, section) {
+    const val = input.value.trim();
+    const clearBtn = document.getElementById(section + 'SearchClear');
+    const dropdown = document.getElementById(section + 'SearchDropdown');
+    const panel    = document.getElementById(section + 'QRef');
+
+    if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+
+    // Reset panel if user is typing again
+    if (panel) panel.style.display = 'none';
+
+    if (!val || val.length < 2) {
+      if (dropdown) dropdown.style.display = 'none';
+      return;
+    }
+
+    const q = normalizeQSearch(val);
+    const matches = (typeof REAGENT_QUICK_REF !== 'undefined' ? REAGENT_QUICK_REF : [])
+      .filter(r => r.keys.some(k => normalizeQSearch(k).includes(q)) ||
+                   normalizeQSearch(r.label).includes(q))
+      .slice(0, 8);
+
+    if (!matches.length) {
+      dropdown.innerHTML = '<div class="qsearch-opt" style="cursor:default;text-align:center;padding:12px 8px;"><span style="font-size:1.2rem">🔍</span><br><span style="color:var(--muted);font-size:0.76rem;">Sem resultados — tente nome completo ou fórmula.</span></div>';
+      dropdown.style.display = 'block';
+      return;
+    }
+
+    dropdown.innerHTML = matches.map(r =>
+      `<div class="qsearch-opt ${r.alert}"
+            onclick="showQRef('${encodeURIComponent(r.label)}','${section}')">
+         <span class="qsearch-opt-name">${r.label}</span>
+         <span class="qsearch-opt-class">${r.class_label}</span>
+       </div>`
+    ).join('');
+    dropdown.style.display = 'block';
+  }
+
+  function showQRef(encodedLabel, section) {
+    const label = decodeURIComponent(encodedLabel);
+    const ref = (typeof REAGENT_QUICK_REF !== 'undefined' ? REAGENT_QUICK_REF : [])
+      .find(r => r.label === label);
+    if (!ref) return;
+
+    // Atualizar URL para deep link compartilhável
+    const tabId = section === 'emerg' ? 'emergencias' : 'descarte';
+    history.replaceState(null, '', '#' + tabId + '?q=' + encodedLabel + '&s=' + section);
+
+    const dropdown = document.getElementById(section + 'SearchDropdown');
+    const panel    = document.getElementById(section + 'QRef');
+    if (dropdown) dropdown.style.display = 'none';
+    if (!panel) return;
+
+    // Badge de alerta
+    let alertBadge = '';
+    if (ref.alert === 'danger') alertBadge = '<span class="qref-badge danger">ALTA PERICULOSIDADE</span>';
+    else if (ref.alert === 'warn') alertBadge = '<span class="qref-badge warn">ATENÇÃO</span>';
+
+    // Nota crítica
+    const noteHTML = ref.note
+      ? `<div class="qref-note ${ref.alert}">${ref.note}</div>`
+      : '';
+
+    // Conteúdo por seção
+    let bodyHTML = '';
+    if (section === 'emerg') {
+      const steps = (ref.emerg || []).map((s, i) =>
+        `<li><span class="qref-step-num">${i+1}</span><span>${s}</span></li>`
+      ).join('');
+      bodyHTML = `
+        <div class="qref-steps-title">⚡ Ações Imediatas — Primeiros Socorros</div>
+        <ul class="qref-steps">${steps}</ul>`;
+    } else {
+      bodyHTML = `
+        <div class="qref-steps-title">♻️ Método de Descarte</div>
+        <ul class="qref-steps">
+          <li><span class="qref-step-num">▸</span><span>${ref.descarte || 'Consultar protocolo da classe.'}</span></li>
+        </ul>`;
+    }
+
+    const targetId = section === 'emerg' ? ref.ec : ref.dc;
+    const btnLabel = section === 'emerg' ? 'Ver protocolo completo →' : 'Ver método completo →';
+
+    // EPI section
+    let epiHTML = '';
+    if (ref.epi && ref.epi.length) {
+      const items = ref.epi.map(e => `<li class="qref-epi-item">${e}</li>`).join('');
+      epiHTML = `<div class="qref-steps-title">🦺 EPI para Contenção de Vazamento</div>
+        <ul class="qref-epi-list">${items}</ul>`;
+    }
+
+    // ID único para o container PubChem
+    const pcId = 'pc-' + section + '-' + Date.now();
+
+    panel.className = `qref-panel ${ref.alert}`;
+    panel.innerHTML = `
+      <div class="qref-header">
+        <div>
+          <span class="qref-label">${ref.label}</span>
+          <div class="qref-badges">
+            ${alertBadge}
+            <span class="qref-badge class">${ref.class_label}</span>
+          </div>
+        </div>
+        <button class="qref-close" onclick="closeQRef('${section}')" title="Fechar">✕</button>
+      </div>
+      ${noteHTML}
+      ${bodyHTML}
+      ${epiHTML}
+      <div class="qref-footer">
+        <button class="qref-scroll-btn" onclick="scrollToCard('${targetId}')">${btnLabel}</button>
+      </div>
+      <div class="qref-pc-wrap" id="${pcId}">
+        <div class="qref-pc-skeleton">
+          <div class="qref-pc-skel-line" style="width:55%"></div>
+          <div class="qref-pc-skel-line" style="width:88%"></div>
+          <div class="qref-pc-skel-line" style="width:72%"></div>
+          <div class="qref-pc-skel-line" style="width:80%"></div>
+        </div>
+      </div>`;
+    panel.style.display = 'block';
+
+    // Apenas pictogramas GHS no painel de emergência/descarte
+    fetchPubChem(ref.keys, pcId, true);
+  }
+
+  // ── PubChem API ────────────────────────────────────────────────
+
+  // Cache simples: evita chamadas repetidas para o mesmo reagente
+  const _pcCache = new Map();
+
+  // Busca recursiva por TOCHeading dentro de Section[] — usada em múltiplos parsers
+  function _pcFindSection(sections, heading) {
+    if (!Array.isArray(sections)) return null;
+    for (const s of sections) {
+      if (s.TOCHeading === heading) return s;
+      const found = _pcFindSection(s.Section, heading);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  // Extrai o primeiro valor legível de uma seção pug_view
+  function _pcExtractValue(section) {
+    const raw = section?.Information?.[0]?.Value?.StringWithMarkup?.[0]?.String;
+    if (!raw) return null;
+    // Remove fonte entre parênteses no final e pega só a primeira linha
+    return raw.split('\n')[0].replace(/\s*\([^)]*\)\s*$/, '').trim() || null;
+  }
+
+  async function fetchPubChem(keys, containerId, picsOnly = false) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const cacheKey = Array.isArray(keys) ? keys[0] : keys;
+    const keyList  = Array.isArray(keys) ? keys : [keys];
+
+    // Helper: wraps fetch com timeout individual
+    function _fetchTimeout(url, ms = 10000) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      return fetch(url, { signal: ctrl.signal })
+        .finally(() => clearTimeout(timer));
+    }
+
+    // Mostra erro com botão de retry
+    function _showRetry(msg) {
+      if (!document.getElementById(containerId)) return;
+      container.innerHTML = `<div class="qref-pc-error">${msg}
+        <button class="qref-pc-retry" onclick="fetchPubChem(${JSON.stringify(keys)},'${containerId}')">↩ Tentar novamente</button>
+      </div>`;
+    }
+
+    // Verificar cache
+    if (_pcCache.has(cacheKey)) {
+      renderPubChemData(container, _pcCache.get(cacheKey), picsOnly);
+      return;
+    }
+
+    // 1. Tentar cada key em sequência até obter um CID válido (timeout 10s por tentativa)
+    let cid = null;
+    for (const key of keyList) {
+      try {
+        const res = await _fetchTimeout(
+          `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(key)}/cids/JSON`
+        );
+        if (!res.ok) continue;
+        const json = await res.json();
+        cid = json.IdentifierList?.CID?.[0];
+        if (cid) break;
+      } catch (_) { continue; }
+    }
+
+    if (!cid) {
+      _showRetry('⚠️ Reagente não encontrado no PubChem.');
+      return;
+    }
+
+    try {
+      // 2. Três chamadas em paralelo com timeout de 12s total
+      const deadline = new Promise((_, rej) =>
+        setTimeout(() => rej(new Error('timeout')), 12000)
+      );
+
+      const [propRes, ghsRes, expRes] = await Promise.race([
+        Promise.all([
+          _fetchTimeout(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/MolecularFormula/JSON`),
+          _fetchTimeout(`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${cid}/JSON?heading=Chemical+Safety`),
+          _fetchTimeout(`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${cid}/JSON?heading=Experimental+Properties`)
+        ]),
+        deadline
+      ]);
+
+      const propJson = propRes.ok ? await propRes.json() : null;
+      // Se "Chemical Safety" falhou, tentar "GHS Classification" como fallback
+      let ghsJson = ghsRes.ok ? await ghsRes.json() : null;
+      if (!ghsJson?.Record) {
+        try {
+          const fb = await _fetchTimeout(`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${cid}/JSON?heading=GHS+Classification`);
+          if (fb.ok) { const j = await fb.json(); if (j?.Record) ghsJson = j; }
+        } catch(_) {}
+      }
+      const expJson = expRes.ok ? await expRes.json() : null;
+
+      const formula = propJson?.PropertyTable?.Properties?.[0]?.MolecularFormula ?? null;
+      const ghs     = parsePubChemGHS(ghsJson);
+      const exp     = parsePubChemExp(expJson);
+
+      const result = { cid, formula, ...ghs, ...exp };
+      _pcCache.set(cacheKey, result);
+      renderPubChemData(container, result, picsOnly);
+
+    } catch (e) {
+      if (e.message === 'timeout') {
+        _showRetry('⏱️ PubChem não respondeu a tempo.');
+      } else {
+        _showRetry('⚠️ Erro ao carregar dados PubChem.');
+      }
+    }
+  }
+
+  function parsePubChemGHS(data) {
+    const result = { pictograms: [], hPhrases: [] };
+    if (!data?.Record) return result;
+
+    const root = data.Record.Section ?? [];
+    const seenPic = new Set();
+    const seenH   = new Set();
+
+    // Extrai TODOS os pictogramas de um StringWithMarkup.
+    // O PubChem pode ter vários pictogramas num único Markup[] (ex: GHS02 + GHS07 + GHS09
+    // como entradas separadas do mesmo array) — por isso iteramos todos sem break.
+    // Fallback: quando o Markup[] não tem URL ghs, tenta extrair do campo String.
+    function _extractPic(swm) {
+      let foundViaMarkup = false;
+      for (const mk of swm.Markup ?? []) {
+        const um = mk.URL?.match(/\/ghs\/(GHS(\d+))\.svg/i);
+        if (!um) continue;
+        const code = 'GHS' + String(um[2]).padStart(2, '0');
+        if (seenPic.has(code)) { foundViaMarkup = true; continue; }
+        seenPic.add(code);
+        result.pictograms.push({ code, imgUrl: mk.URL });
+        foundViaMarkup = true;
+      }
+      // Fallback: extrair do texto String quando Markup não tem URLs ghs
+      if (!foundViaMarkup) {
+        const sm = swm.String?.match(/GHS(\d+)/i);
+        if (sm) {
+          const code = 'GHS' + String(sm[1]).padStart(2, '0');
+          if (!seenPic.has(code)) {
+            seenPic.add(code);
+            result.pictograms.push({ code, imgUrl: `https://pubchem.ncbi.nlm.nih.gov/images/ghs/${code}.svg` });
+          }
+        }
+      }
+    }
+
+    // Varredura recursiva completa da árvore de seções:
+    // independe do nome das seções (varia por fonte: ECHA, EPA, Japan ChemSafety…)
+    function _walk(sections) {
+      for (const s of sections ?? []) {
+        for (const info of s.Information ?? []) {
+          for (const swm of info.Value?.StringWithMarkup ?? []) {
+            // Pictograma: qualquer swm que tenha URL de imagem ghs no Markup
+            if (swm.Markup?.some(mk => mk.URL?.includes('/images/ghs/'))) {
+              _extractPic(swm);
+            }
+            // Frases H (H200–H420 etc.)
+            const hm = swm.String?.match(/\bH\d{3}\b/);
+            if (hm && !seenH.has(hm[0])) {
+              seenH.add(hm[0]);
+              result.hPhrases.push(hm[0]);
+            }
+          }
+        }
+        _walk(s.Section);
+      }
+    }
+
+    try { _walk(root); } catch (_) {}
+    return result;
+  }
+
+  function parsePubChemExp(data) {
+    const result = { flashPoint: null, boilingPoint: null, vaporPressure: null, solubility: null };
+    if (!data) return result;
+    try {
+      const root = data.Record?.Section ?? [];
+      result.flashPoint    = _pcExtractValue(_pcFindSection(root, 'Flash Point'));
+      result.boilingPoint  = _pcExtractValue(_pcFindSection(root, 'Boiling Point'));
+      result.vaporPressure = _pcExtractValue(_pcFindSection(root, 'Vapor Pressure'));
+      result.solubility    = _pcExtractValue(_pcFindSection(root, 'Solubility'));
+    } catch (_) {}
+    return result;
+  }
+
+  // Monta HTML dos pictogramas GHS (compartilhado entre os dois modos de render)
+  function _buildPicsHTML(data) {
+    return data.pictograms?.length
+      ? data.pictograms.map(pic => {
+          const code = typeof pic === 'string' ? pic : pic.code;
+          const imgUrl = (typeof pic === 'object' && pic.imgUrl)
+            || `https://pubchem.ncbi.nlm.nih.gov/images/ghs/${code}.svg`;
+          const p = (typeof GHS_PICTOGRAMS !== 'undefined' && GHS_PICTOGRAMS[code]) || { label: code };
+          return `<div class="qref-pc-pic-wrap">
+            <img class="qref-pc-pic-img" src="${imgUrl}" alt="${p.label}" title="${p.label}" loading="lazy" onerror="this.style.display='none'">
+            <span class="qref-pc-pic-label">${p.label}</span>
+          </div>`;
+        }).join('')
+      : '<span class="qref-pc-na">—</span>';
+  }
+
+  // picsOnly=true → só pictogramas (painel emergência/descarte)
+  // picsOnly=false → dados completos (aba CAS)
+  function renderPubChemData(container, data, picsOnly = false) {
+    if (!container) return;
+    if (!data) {
+      container.innerHTML = '<div class="qref-pc-error">⚠️ Dados PubChem não disponíveis.</div>';
+      return;
+    }
+
+    const cidLink = `<a class="qref-pc-link" href="https://pubchem.ncbi.nlm.nih.gov/compound/${data.cid}" target="_blank" rel="noopener">CID ${data.cid} ↗</a>`;
+    const picsHTML = _buildPicsHTML(data);
+
+    // ── Modo compacto: apenas pictogramas (emergência/descarte) ──────────────
+    if (picsOnly) {
+      container.innerHTML = `
+        <div class="qref-pc-header">
+          <span>Perigos GHS · PubChem</span>
+          ${cidLink}
+        </div>
+        <div class="qref-pc-pics">${picsHTML}</div>`;
+      return;
+    }
+
+    // ── Modo completo: propriedades + pictogramas + frases H (aba CAS) ───────
+    const physProps = [
+      { label: '🔥 Ponto de Fulgor',   val: data.flashPoint },
+      { label: '♨️ Ponto de Ebulição', val: data.boilingPoint },
+      { label: '💨 Pressão de Vapor',  val: data.vaporPressure },
+      { label: '💧 Solubilidade',       val: data.solubility },
+      { label: '⚗️ Fórmula',            val: data.formula },
+    ].filter(p => p.val);
+
+    const propsHTML = physProps.length
+      ? `<div class="qref-pc-props">${
+          physProps.map(p =>
+            `<span class="qref-pc-prop">
+              <span class="qref-pc-prop-label">${p.label}</span>
+              <span class="qref-pc-prop-value">${p.val}</span>
+            </span>`
+          ).join('')
+        }</div>`
+      : '';
+
+    const hHTML = [...new Set(data.hPhrases ?? [])].map(code => {
+      const text = (typeof H_PHRASES !== 'undefined' && H_PHRASES[code]) || code;
+      return `<div class="qref-pc-hphrase">
+        <span class="qref-pc-hcode">${code}</span>
+        <span class="qref-pc-htext">${text}</span>
+      </div>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="qref-pc-header">
+        <span>📊 PubChem · NIH</span>
+        ${cidLink}
+      </div>
+      ${propsHTML}
+      <div class="qref-pc-section-label">Pictogramas GHS</div>
+      <div class="qref-pc-pics">${picsHTML}</div>
+      ${hHTML ? `<div class="qref-pc-section-label">Frases H — Declarações de perigo (pt-BR)</div>
+      <div class="qref-pc-hphrases">${hHTML}</div>` : ''}
+    `;
+  }
+
+  function closeQRef(section) {
+    const panel = document.getElementById(section + 'QRef');
+    if (panel) panel.style.display = 'none';
+    // Limpar query string da URL mas preservar o hash da aba
+    const tabId = section === 'emerg' ? 'emergencias' : 'descarte';
+    history.replaceState(null, '', '#' + tabId);
+  }
+
+  function clearReagentSearch(section) {
+    const input    = document.getElementById(section + 'SearchInput');
+    const dropdown = document.getElementById(section + 'SearchDropdown');
+    const panel    = document.getElementById(section + 'QRef');
+    const clearBtn = document.getElementById(section + 'SearchClear');
+    if (input)    input.value = '';
+    if (dropdown) dropdown.style.display = 'none';
+    if (panel)    panel.style.display = 'none';
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (input)    input.focus();
+  }
+
+  // ── Navegação por teclado no dropdown de busca (↑↓ Enter Escape) ────────
+  function initQSearchKeyboard(section) {
+    const input = document.getElementById(section + 'SearchInput');
+    const dropdown = document.getElementById(section + 'SearchDropdown');
+    if (!input || !dropdown) return;
+
+    input.addEventListener('keydown', e => {
+      if (dropdown.style.display === 'none') return;
+      const opts = [...dropdown.querySelectorAll('.qsearch-opt[onclick]')];
+      if (!opts.length) return;
+
+      const focused = dropdown.querySelector('.qsearch-opt.kb-focus');
+      const idx = focused ? opts.indexOf(focused) : -1;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (focused) focused.classList.remove('kb-focus');
+        opts[Math.min(idx + 1, opts.length - 1)].classList.add('kb-focus');
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (focused) focused.classList.remove('kb-focus');
+        if (idx > 0) opts[idx - 1].classList.add('kb-focus');
+      } else if (e.key === 'Enter') {
+        if (focused) { e.preventDefault(); focused.click(); }
+        else if (opts[0]) { e.preventDefault(); opts[0].click(); }
+      } else if (e.key === 'Escape') {
+        dropdown.style.display = 'none';
+        input.blur();
+      }
+    });
+
+    // Limpar kb-focus quando o mouse entra em qualquer opção
+    dropdown.addEventListener('mouseenter', () => {
+      dropdown.querySelectorAll('.qsearch-opt.kb-focus')
+        .forEach(o => o.classList.remove('kb-focus'));
+    });
+  }
+
+  // Inicializar teclado para as duas seções após DOM pronto
+  initQSearchKeyboard('emerg');
+  initQSearchKeyboard('descarte');
+
+  // ── Accordion exclusivo: fecha sub-tópicos irmãos ao abrir um novo ─────────
+  document.querySelectorAll('.emerg-class-card').forEach(card => {
+    card.addEventListener('toggle', e => {
+      if (!e.target.open || !e.target.classList.contains('emerg-scenario')) return;
+      card.querySelectorAll('details.emerg-scenario').forEach(d => {
+        if (d !== e.target) d.removeAttribute('open');
+      });
+    }, true);
+  });
+
+  // ── Accordion exclusivo: fecha cards de classe irmãos ao abrir um novo ─────
+  const emergSection = document.getElementById('emergencias');
+  if (emergSection) {
+    emergSection.addEventListener('toggle', e => {
+      if (!e.target.open || !e.target.classList.contains('emerg-class-card')) return;
+      emergSection.querySelectorAll('details.emerg-class-card').forEach(d => {
+        if (d !== e.target) d.removeAttribute('open');
+      });
+    }, true);
+  }
+
+  // ── Select-all ao clicar num campo de busca com texto ─────────────────────
+  ['reagentSearchInput', 'emergSearchInput', 'descarteSearchInput', 'casSearchInput', 'maqueteSearchInput']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', () => { if (el.value) el.select(); });
+    });
+
+  window.searchChip = function(name, section) {
+    const input = document.getElementById(section + 'SearchInput');
+    if (!input) return;
+    // Rolar até a barra de busca e preencher
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    input.value = name;
+    // Disparar a busca
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    // Após renderizar o dropdown, auto-selecionar o primeiro resultado
+    setTimeout(() => {
+      const dropdown = document.getElementById(section + 'SearchDropdown');
+      if (!dropdown) return;
+      const first = dropdown.querySelector('.qsearch-opt');
+      if (first) first.click();
+    }, 80);
+  };
+
+  // Abre/fecha bloco PubChem completo dentro de um card CAS
+  window.toggleCasPubChem = function(cas, panelId, btn) {
+    const panel = document.getElementById(panelId);
+    if (!panel) return;
+
+    if (panel.style.display !== 'none') {
+      panel.style.display = 'none';
+      btn.textContent = '📊 PubChem';
+      btn.classList.remove('active');
+      return;
+    }
+
+    panel.style.display = 'block';
+    btn.textContent = '✕ Fechar';
+    btn.classList.add('active');
+
+    // Skeleton enquanto carrega
+    panel.innerHTML = `<div class="qref-pc-skeleton cas-pc-skeleton">
+      <div class="qref-pc-skel-line" style="width:55%"></div>
+      <div class="qref-pc-skel-line" style="width:88%"></div>
+      <div class="qref-pc-skel-line" style="width:70%"></div>
+      <div class="qref-pc-skel-line" style="width:82%"></div>
+    </div>`;
+
+    // CAS é aceito como nome pelo PubChem (ex: "64-17-5")
+    fetchPubChem([cas], panelId, false);
+  };
+
+  function scrollToCard(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // Se for um <details> colapsado, abrir antes de rolar
+    if (el.tagName === 'DETAILS' && !el.open) el.open = true;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('qref-highlight');
+    void el.offsetWidth;
+    el.classList.add('qref-highlight');
+    setTimeout(() => el.classList.remove('qref-highlight'), 2000);
+  }
+
+  // Fechar dropdown de busca ao clicar fora
+  document.addEventListener('click', e => {
+    ['emerg','descarte'].forEach(section => {
+      const dropdown = document.getElementById(section + 'SearchDropdown');
+      const input    = document.getElementById(section + 'SearchInput');
+      if (dropdown && input && !dropdown.contains(e.target) && e.target !== input) {
+        dropdown.style.display = 'none';
+      }
+    });
+  });
+
+  // Botão voltar ao topo
+  (function() {
+    const btn = document.getElementById('backToTop');
+    if (!btn) return;
+    window.addEventListener('scroll', () => {
+      btn.classList.toggle('visible', window.scrollY > 320);
+    }, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  })();
+
+  // Tornar chips de reagentes clicáveis — redireciona para busca rápida
+  document.addEventListener('DOMContentLoaded', () => {
+    // Chips de emergência
+    document.querySelectorAll('#emergencias .emerg-reagent-chip').forEach(chip => {
+      chip.classList.add('is-searchable');
+      chip.style.cursor = 'pointer';
+      chip.addEventListener('click', () => searchChip(chip.textContent.trim(), 'emerg'));
+    });
+    // Chips de descarte
+    document.querySelectorAll('#descarte .emerg-reagent-chip, #descarte .descarte-chip').forEach(chip => {
+      chip.classList.add('is-searchable');
+      chip.style.cursor = 'pointer';
+      chip.addEventListener('click', () => searchChip(chip.textContent.trim(), 'descarte'));
+    });
+
+    // ── ARIA labels — remove emoji do nome acessível dos accordions ───────────
+    // Cards de classe (ex: "🔥 Inflamáveis e Combustíveis" → "Inflamáveis e Combustíveis")
+    document.querySelectorAll('.emerg-class-card > summary').forEach(s => {
+      const title = s.querySelector('.emerg-class-header-title');
+      if (title) s.setAttribute('aria-label', title.textContent.trim());
+    });
+    // Sub-tópicos de cenário (ex: "🩹 Contato com a pele" → "Contato com a pele")
+    document.querySelectorAll('.emerg-scenario > summary').forEach(s => {
+      const clean = s.textContent.replace(/\p{Emoji_Presentation}/gu, '').trim();
+      if (clean) s.setAttribute('aria-label', clean);
+    });
+    // Cards de descarte
+    document.querySelectorAll('.descarte-card > summary').forEach(s => {
+      const clean = s.textContent.replace(/\p{Emoji_Presentation}/gu, '').trim();
+      if (clean) s.setAttribute('aria-label', clean);
+    });
+  });

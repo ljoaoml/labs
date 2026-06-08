@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -6,8 +6,61 @@
 <title>NADF · UNIFENAS — Organização de Reagentes</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<!-- Loader crítico inline: não depende do CSS externo para aparecer -->
+<style>
+  #appLoader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #0d0f14;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    transition: opacity 0.25s ease;
+  }
+  #appLoader.out { opacity: 0; pointer-events: none; }
+  .ldr-logo {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(145deg, #5ab4ff, #1a4fa8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 18px rgba(26,79,168,0.45);
+  }
+  .ldr-name {
+    font-family: sans-serif; font-size: 0.75rem;
+    color: #7a8499; letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .ldr-bar {
+    width: 96px; height: 2px;
+    background: #1e2430; border-radius: 2px; overflow: hidden;
+  }
+  .ldr-fill {
+    height: 100%; width: 38%; background: #00c896;
+    border-radius: 2px;
+    animation: ldrSlide 1.1s ease-in-out infinite;
+  }
+  @keyframes ldrSlide {
+    from { transform: translateX(-160%); }
+    to   { transform: translateX(430%); }
+  }
+</style>
+<script>
+  // Remove o loader assim que o DOM estiver pronto.
+  // Usar DOMContentLoaded aqui (no <head>) garante que o loader desaparece
+  // mesmo se app.js lançar um erro durante a inicialização.
+  document.addEventListener('DOMContentLoaded', function() {
+    var l = document.getElementById('appLoader');
+    if (!l) return;
+    l.classList.add('out');
+    setTimeout(function() { if (l.parentNode) l.parentNode.removeChild(l); }, 280);
+  });
+</script>
 </head>
 <body>
+
+<!-- Loader inicial: aparece enquanto HTML/CSS/JS carregam -->
+<div id="appLoader" role="status" aria-label="Carregando aplicação">
+  <div class="ldr-logo">🧪</div>
+  <div class="ldr-name">NADF · UNIFENAS</div>
+  <div class="ldr-bar"><div class="ldr-fill"></div></div>
+</div>
 
 <!-- Matrix incompatibility tooltip -->
 <div class="matrix-tooltip" id="matrixTooltip">
@@ -20,10 +73,10 @@
 <div class="class-drawer" id="classDrawer">
   <div class="class-drawer-accentbar" id="drawerAccentBar"></div>
   <div class="class-drawer-header">
-    <span id="drawerEmoji" style="font-size:1.6rem;"></span>
+    <span id="drawerEmoji" class="drawer-emoji"></span>
     <div>
-      <div id="drawerTitle" style="font-size:1rem;font-weight:700;color:var(--text);"></div>
-      <div id="drawerBadge" style="font-size:0.6rem;font-family:'Space Mono',monospace;margin-top:3px;"></div>
+      <div id="drawerTitle" class="drawer-title"></div>
+      <div id="drawerBadge" class="drawer-badge"></div>
     </div>
     <button class="class-drawer-close" onclick="closeClassDrawer()">✕</button>
   </div>
@@ -33,12 +86,8 @@
 <header>
 
   <div class="logo-icon">
-    <img
-        src="assets/img/logo.PNG"
-        alt="NADF"
-        style="width:100%;height:100%;object-fit:contain;"
-    >
-</div>
+    <img src="assets/img/logo.PNG" alt="NADF">
+  </div>
 
   <div>
     <h1>Organização de Reagentes</h1>
@@ -52,7 +101,10 @@
     </div>
   </div>
 </header>
- 
+
+<!-- Botão voltar ao topo -->
+<button class="back-to-top" id="backToTop" title="Voltar ao topo" aria-label="Voltar ao topo">&#8593;</button>
+
 <div class="tabs-wrap" id="tabsWrap">
   <div class="tabs" id="tabsBar">
     <button class="tab active" onclick="showTab('classes',this)">Classes de Risco</button>
@@ -61,6 +113,8 @@
     <button class="tab" onclick="showTab('cas',this)">CAS</button>
     <button class="tab" onclick="showTab('regras',this)">Regras de Armazenamento</button>
     <button class="tab" onclick="showTab('normas',this)">Normas Brasileiras</button>
+    <button class="tab" onclick="showTab('emergencias',this)">🚨 Emergências</button>
+    <button class="tab" onclick="showTab('descarte',this)">♻️ Descarte</button>
   </div>
 </div>
 
@@ -148,7 +202,6 @@
       </div>
 
     </div>
-    </div>
   </section>
 
   <section id="incompatibilidade" class="section">
@@ -158,24 +211,24 @@
       <p>Consulte a tabela ou use o verificador abaixo para checar dois reagentes específicos.</p>
     </div>
 
-    <div class="card" style="margin-bottom:24px;">
+    <div class="card">
       <div class="card-title">⚗️ Verificador de incompatibilidade</div>
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Digite dois reagentes para verificar se podem ser armazenados juntos.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <div style="position:relative;flex:1;min-width:200px;">
-          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:0.85rem;">🧪</span>
-          <input type="text" id="incomp1" class="search-input" style="padding-left:34px;" placeholder="Reagente 1 (ex: acetona)" oninput="incompAutoComplete(this,'incomp1List')">
-          <div id="incomp1List" class="incomp-dropdown" style="display:none;"></div>
+      <p class="incompat-hint">Digite dois reagentes para verificar se podem ser armazenados juntos.</p>
+      <div class="incompat-row">
+        <div class="incompat-field">
+          <span class="incompat-field-icon">🧪</span>
+          <input type="text" id="incomp1" class="search-input" placeholder="Reagente 1 (ex: acetona)" oninput="incompAutoComplete(this,'incomp1List')">
+          <div id="incomp1List" class="incomp-dropdown"></div>
         </div>
-        <span style="color:var(--muted);font-size:1rem;font-weight:700;">+</span>
-        <div style="position:relative;flex:1;min-width:200px;">
-          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:0.85rem;">🧪</span>
-          <input type="text" id="incomp2" class="search-input" style="padding-left:34px;" placeholder="Reagente 2 (ex: HNO₃)" oninput="incompAutoComplete(this,'incomp2List')">
-          <div id="incomp2List" class="incomp-dropdown" style="display:none;"></div>
+        <span class="incompat-sep">+</span>
+        <div class="incompat-field">
+          <span class="incompat-field-icon">🧪</span>
+          <input type="text" id="incomp2" class="search-input" placeholder="Reagente 2 (ex: HNO₃)" oninput="incompAutoComplete(this,'incomp2List')">
+          <div id="incomp2List" class="incomp-dropdown"></div>
         </div>
         <button class="incompat-btn" onclick="checkIncompat()">Verificar</button>
       </div>
-      <div id="incompResult" style="margin-top:14px;display:none;"></div>
+      <div id="incompResult" class="incompat-result"></div>
     </div>
 
     <div class="alert">
@@ -211,7 +264,7 @@
       <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div> ⚠️ Cautela — segregar</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div> ❌ NUNCA juntos</div>
     </div>
-    <div class="card" style="margin-top:20px">
+    <div class="card card--mt-lg">
       <div class="card-title">Exemplos Críticos</div>
       <ul class="rules-list">
         <li><span class="rule-num">!</span><div class="rule-text"><strong>Ácidos + Bases</strong><span>Reação exotérmica violenta. HCl + NaOH: altamente perigoso se misturado acidentalmente.</span></div></li>
@@ -271,9 +324,9 @@
     <div class="norma-card"><span class="norma-tag">Lei 10.357/2001</span><h4>Controle de Precursores Químicos</h4><p>Controle e fiscalização de produtos químicos que possam ser destinados à elaboração de entorpecentes. Regulamentada pela ANVISA e Polícia Federal.</p></div>
     <div class="norma-card"><span class="norma-tag">CONAMA 358/2005</span><h4>Tratamento e Disposição de Resíduos</h4><p>Tratamento e disposição final de resíduos dos serviços de saúde, incluindo reagentes e produtos químicos descartados.</p></div>
     <div class="norma-card"><span class="norma-tag">NR-1 / MTE</span><h4>PGR — Programa de Gerenciamento de Riscos</h4><p>Substituiu o antigo PPRA (NR-9). Obrigatório para laboratórios mapearem os riscos químicos, físicos e biológicos através do Inventário de Riscos e Plano de Ação.</p></div>
-    <div class="card" style="margin-top:8px">
+    <div class="card card--mt">
       <div class="card-title">Por onde começar</div>
-      <ol style="padding-left:20px;color:var(--muted);font-size:0.83rem;line-height:2.1">
+      <ol class="norma-steps">
         <li>Faça o inventário completo de todos os reagentes</li>
         <li>Solicite as FDS de cada produto ao fornecedor</li>
         <li>Classifique cada reagente conforme GHS/ABNT NBR 14725</li>
@@ -312,52 +365,52 @@
         <button class="mfilter" data-filter="F" onclick="setMaqueteFilter('F',this)" style="--fc:#d080ff;">☠️ Tóxicos/Ox.</button>
       </div>
     </div>
-    <div id="maqueteSearchResults" style="display:none;margin-bottom:18px;"></div>
+    <div id="maqueteSearchResults"></div>
 
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 22px;margin-bottom:18px;">
-      <div style="font-size:0.66rem;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;text-align:center;margin-bottom:18px;">Vista de cima — escolha a parede</div>
-      <div style="position:relative;width:100%;max-width:380px;aspect-ratio:1.15/1;margin:0 auto;">
-        <div style="position:absolute;inset:34px;background:linear-gradient(135deg,#1e2530,#252d3a);border-radius:6px;box-shadow:inset 0 0 30px rgba(0,0,0,0.35);border:1px solid #2a3545;"></div>
-        <div style="position:absolute;inset:34px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:rgba(160,180,200,0.35);font-size:0.62rem;font-family:'Space Mono',monospace;pointer-events:none;text-align:center;letter-spacing:0.08em;">
-          <span style="font-size:1rem;margin-bottom:4px;opacity:0.4;">🚶</span>ÁREA DE<br>CIRCULAÇÃO
+    <div class="maquete-plan-card">
+      <div class="maquete-plan-caption">Vista de cima — escolha a parede</div>
+      <div class="maquete-plan-stage">
+        <div class="maquete-plan-room"></div>
+        <div class="maquete-plan-area">
+          <span class="maquete-plan-area-icon">🚶</span>ÁREA DE<br>CIRCULAÇÃO
         </div>
-        <button class="wallbtn" data-wall="B" onclick="selectWall('B')" style="position:absolute;top:0;left:34px;right:34px;height:30px;--wc:#f0c830;"><span>⚗️ FUNDO — ÁCIDOS</span></button>
-        <button class="wallbtn" data-wall="F" onclick="selectWall('F')" style="position:absolute;bottom:0;left:34px;right:34px;height:30px;--wc:#d080ff;"><span>☠️ FRENTE — TÓXICOS</span></button>
-        <button class="wallbtn wallbtn-v" data-wall="L" onclick="selectWall('L')" style="position:absolute;left:0;top:34px;bottom:34px;width:30px;--wc:#ff8850;"><span>🔥 ESQ — INFLAMÁVEIS</span></button>
-        <button class="wallbtn wallbtn-v" data-wall="R" onclick="selectWall('R')" style="position:absolute;right:0;top:34px;bottom:34px;width:30px;--wc:#70b8ff;"><span>🧂 DIR — SAIS</span></button>
+        <button class="wallbtn wallbtn-top" data-wall="B" onclick="selectWall('B')" style="--wc:#f0c830;"><span>⚗️ FUNDO — ÁCIDOS</span></button>
+        <button class="wallbtn wallbtn-bottom" data-wall="F" onclick="selectWall('F')" style="--wc:#d080ff;"><span>☠️ FRENTE — TÓXICOS</span></button>
+        <button class="wallbtn wallbtn-v wallbtn-left" data-wall="L" onclick="selectWall('L')" style="--wc:#ff8850;"><span>🔥 ESQ — INFLAMÁVEIS</span></button>
+        <button class="wallbtn wallbtn-v wallbtn-right" data-wall="R" onclick="selectWall('R')" style="--wc:#70b8ff;"><span>🧂 DIR — SAIS</span></button>
       </div>
-      <div style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--muted)"><span id="wallCaption">👆 Selecione uma parede acima</span></div>
+      <div class="maquete-plan-footer"><span id="wallCaption">👆 Selecione uma parede acima</span></div>
     </div>
 
-    <div id="shelfStack" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 18px;margin-bottom:18px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-        <span id="stackIcon" style="font-size:1.4rem;"></span>
+    <div id="shelfStack">
+      <div class="shelf-stack-header">
+        <span id="stackIcon" class="shelf-stack-icon"></span>
         <div>
-          <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">PAREDE</div>
-          <div id="stackTitle" style="font-size:1rem;font-weight:700;"></div>
+          <div class="shelf-stack-label">PAREDE</div>
+          <div id="stackTitle" class="shelf-stack-title"></div>
         </div>
-        <div id="stackNote" style="margin-left:auto;font-size:0.68rem;color:var(--muted);font-family:'Space Mono',monospace;text-align:right;"></div>
+        <div id="stackNote" class="shelf-stack-note"></div>
       </div>
       <div class="stock-disclaimer">
         ℹ️ Os reagentes listados são exemplos representativos para fins acadêmicos e não correspondem necessariamente ao estoque real do almoxarifado.
       </div>
-      <div id="shelfRows" style="display:flex;flex-direction:column;gap:7px;"></div>
+      <div id="shelfRows"></div>
     </div>
 
-    <div id="shelfPanel" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:18px;">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
-        <span id="pIcon" style="font-size:1.7rem;"></span>
-        <div style="flex:1;min-width:0;">
-          <div id="pWall" style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;"></div>
-          <div id="pTitle" style="font-size:1rem;font-weight:700;color:var(--text);"></div>
+    <div id="shelfPanel">
+      <div class="shelf-panel-header">
+        <span id="pIcon" class="shelf-panel-icon"></span>
+        <div class="shelf-panel-meta">
+          <div id="pWall" class="shelf-panel-wall"></div>
+          <div id="pTitle" class="shelf-panel-title"></div>
         </div>
         <span id="pBadge" class="pbadge"></span>
       </div>
-      <div id="pCtrl" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
-      <div id="pAccess" style="font-size:0.7rem;margin-bottom:8px;font-family:'Space Mono',monospace;"></div>
-      <div id="pDesc" style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.6;"></div>
-      <div id="pReagents" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
-      <div id="pRule" style="font-size:0.74rem;padding:8px 12px;border-radius:6px;line-height:1.5;"></div>
+      <div id="pCtrl"></div>
+      <div id="pAccess"></div>
+      <div id="pDesc"></div>
+      <div id="pReagents"></div>
+      <div id="pRule"></div>
     </div>
 
     <button class="go-incompat-btn" onclick="goToIncompat()">
@@ -369,14 +422,14 @@
     <div class="card">
       <div class="card-title">Acesso e regras gerais</div>
       <ul class="rules-list">
-        <li><span class="rule-num" style="color:#00c896;">P1</span><div class="rule-text"><strong>Base — fácil</strong><span>Itens pesados, perigosos, concentrados. Mais seguros na base: queda = menor risco de respingo alto.</span></div></li>
-        <li><span class="rule-num" style="color:#00c896;">P2</span><div class="rule-text"><strong>Cintura — fácil</strong><span>Uso frequente com risco moderado.</span></div></li>
-        <li><span class="rule-num" style="color:#00c896;">P3</span><div class="rule-text"><strong>Olhos — fácil</strong><span>Uso diário, menor periculosidade.</span></div></li>
-        <li><span class="rule-num" style="color:#ffb84a;">P4</span><div class="rule-text"><strong>Acima dos olhos 🪜</strong><span>Itens leves, uso ocasional. Nunca ácidos/bases concentrados aqui.</span></div></li>
-        <li><span class="rule-num" style="color:#ffb84a;">P5</span><div class="rule-text"><strong>Alta 🪜</strong><span>Reservas leves, itens de uso raro.</span></div></li>
-        <li><span class="rule-num" style="color:#ffb84a;">P6</span><div class="rule-text"><strong>Topo 🪜</strong><span>Estoque de reserva, frascos vazios limpos.</span></div></li>
+        <li><span class="rule-num">P1</span><div class="rule-text"><strong>Base — fácil</strong><span>Itens pesados, perigosos, concentrados. Mais seguros na base: queda = menor risco de respingo alto.</span></div></li>
+        <li><span class="rule-num">P2</span><div class="rule-text"><strong>Cintura — fácil</strong><span>Uso frequente com risco moderado.</span></div></li>
+        <li><span class="rule-num">P3</span><div class="rule-text"><strong>Olhos — fácil</strong><span>Uso diário, menor periculosidade.</span></div></li>
+        <li><span class="rule-num rule-num--warn">P4</span><div class="rule-text"><strong>Acima dos olhos 🪜</strong><span>Itens leves, uso ocasional. Nunca ácidos/bases concentrados aqui.</span></div></li>
+        <li><span class="rule-num rule-num--warn">P5</span><div class="rule-text"><strong>Alta 🪜</strong><span>Reservas leves, itens de uso raro.</span></div></li>
+        <li><span class="rule-num rule-num--warn">P6</span><div class="rule-text"><strong>Topo 🪜</strong><span>Estoque de reserva, frascos vazios limpos.</span></div></li>
       </ul>
-      <div class="alert" style="margin-top:12px;margin-bottom:0;">
+      <div class="alert alert--inline">
         ⚠️ <span>Reagentes <strong>controlados pela PF</strong> exigem registro mensal no <strong>SIPROQUIM 2</strong> (CRC + CLF ativos). Ácido nítrico: registro no <strong>Exército Brasileiro (SisFPC)</strong>.</span>
       </div>
     </div>
@@ -391,28 +444,26 @@
       <p>Identificador universal de substâncias químicas mantido pela American Chemical Society.</p>
     </div>
 
-    <!-- BARRA DE PESQUISA CAS — movida para o topo da seção -->
-    <div class="card" style="margin-bottom:18px;">
+    <!-- BARRA DE PESQUISA CAS -->
+    <div class="card">
       <div class="card-title">Consultar número CAS</div>
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Pesquise pelo nome comum, nome IUPAC ou fórmula química (com ou sem acento).</p>
-      <div style="position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <div style="position:relative;flex:1;min-width:240px;">
-          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;">🔢</span>
-          <input type="text" id="casSearchInput" class="search-input" style="padding-left:38px;"
+      <p class="card-hint">Pesquise pelo nome comum, nome IUPAC ou fórmula química (com ou sem acento).</p>
+      <div class="cas-search-row">
+        <div class="cas-search-field">
+          <span class="cas-search-icon">🔢</span>
+          <input type="text" id="casSearchInput" class="search-input"
             placeholder="Ex: agua, H2O, acido sulfurico, NaOH, etanol…"
             oninput="performCasSearch()">
         </div>
-        <button onclick="document.getElementById('casSearchInput').value='';performCasSearch();"
-          style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:10px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;transition:all 0.2s;"
-          onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Limpar</button>
+        <button class="cas-clear-btn" onclick="document.getElementById('casSearchInput').value='';performCasSearch();">Limpar</button>
       </div>
-      <div id="casResults" style="margin-top:16px;"></div>
+      <div id="casResults"></div>
     </div>
 
-    <div class="card" style="margin-bottom:18px;">
+    <div class="card">
       <div class="card-title">O que é</div>
       <p style="font-size:0.88rem;color:var(--muted);line-height:1.8;margin-bottom:16px;">
-        Identificador numérico único de substâncias químicas mantido pelo <strong style="color:var(--text)">Chemical Abstracts Service (ACS)</strong>. Funciona como o "CPF" de uma molécula — independente do idioma, país ou nome comercial.
+        Identificador numérico único de substâncias químicas mantido pelo <strong>Chemical Abstracts Service (ACS)</strong>. Funciona como o "CPF" de uma molécula — independente do idioma, país ou nome comercial.
       </p>
       <div class="cas-facts">
         <div class="cas-fact"><div class="cas-fact-val">XXXXXXXX-YY-Z</div><div class="cas-fact-label">Formato padrão</div></div>
@@ -422,55 +473,860 @@
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:18px;">
+    <div class="card">
       <div class="card-title">Como funciona o dígito verificador</div>
       <p style="font-size:0.84rem;color:var(--muted);line-height:1.8;margin-bottom:8px;">
         O último dígito do número CAS é calculado a partir dos demais. Cada dígito (da direita para a esquerda, excluindo o verificador) é multiplicado pela sua posição (1, 2, 3…). A soma é dividida por 10 e o resto é o dígito verificador. Isso garante que números inventados ou digitados com erro sejam facilmente detectados.
       </p>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--accent);">
+      <div class="cas-code-block">
         Exemplo — Etanol (64-17-5)<br>
-        <span style="color:var(--muted);">Número sem o verificador: 64-17<br>
+        <span class="cas-code-detail">Número sem o verificador: 64-17<br>
         Dígitos da direita p/ esquerda: 7, 1, 4, 6<br>
         7×1 + 1×2 + 4×3 + 6×4 = 7 + 2 + 12 + 24 = 45<br>
-        45 mod 10 = <strong style="color:var(--accent);">5</strong> ✓ (dígito verificador confirmado)</span>
+        45 mod 10 = <strong class="cas-code-result">5</strong> ✓ (dígito verificador confirmado)</span>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:18px;">
+    <div class="card">
       <div class="card-title">Por que é importante no laboratório</div>
-      <div class="classes-grid" style="margin-top:0;">
+      <div class="classes-grid classes-grid--flush">
         <div class="class-card c-base">
           <span class="emoji">📋</span>
           <h3>FDS / MSDS</h3>
-          <p style="color:#a8b2c6;font-size:0.84rem;line-height:1.6;">Toda Ficha de Dados de Segurança obrigatoriamente contém o CAS para identificação inequívoca do reagente.</p>
+          <p class="cas-card-detail">Toda Ficha de Dados de Segurança obrigatoriamente contém o CAS para identificação inequívoca do reagente.</p>
         </div>
         <div class="class-card c-acido">
           <span class="emoji">🔍</span>
           <h3>Rastreabilidade</h3>
-          <p style="color:#a8b2c6;font-size:0.84rem;line-height:1.6;">Permite localizar qualquer substância em bancos internacionais independentemente do nome comercial ou idioma.</p>
+          <p class="cas-card-detail">Permite localizar qualquer substância em bancos internacionais independentemente do nome comercial ou idioma.</p>
         </div>
         <div class="class-card c-oxidante">
           <span class="emoji">⚖️</span>
           <h3>Regulatório</h3>
-          <p style="color:#a8b2c6;font-size:0.84rem;line-height:1.6;">ANVISA, Polícia Federal e Exército Brasileiro usam o CAS para controle de precursores e substâncias controladas.</p>
+          <p class="cas-card-detail">ANVISA, Polícia Federal e Exército Brasileiro usam o CAS para controle de precursores e substâncias controladas.</p>
         </div>
         <div class="class-card c-inflamavel">
           <span class="emoji">🛒</span>
           <h3>Compras e Estoque</h3>
-          <p style="color:#a8b2c6;font-size:0.84rem;line-height:1.6;">Evita confusão entre isômeros, formas hidratadas e nomes genéricos na hora de adquirir ou registrar reagentes.</p>
+          <p class="cas-card-detail">Evita confusão entre isômeros, formas hidratadas e nomes genéricos na hora de adquirir ou registrar reagentes.</p>
         </div>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:24px;">
+    <div class="card">
       <div class="card-title">Como surgiu</div>
       <ul class="rules-list">
-        <li><span class="rule-num" style="color:var(--accent2);">1907</span><div class="rule-text"><strong>Fundação do Chemical Abstracts Service</strong><span>A ACS cria o CAS para indexar publicações científicas e organizar o crescente número de substâncias descobertas.</span></div></li>
-        <li><span class="rule-num" style="color:var(--accent2);">1965</span><div class="rule-text"><strong>Primeiro número CAS atribuído</strong><span>O sistema de numeração é formalizado e começa a ser adotado por laboratórios, indústrias e órgãos regulatórios do mundo todo.</span></div></li>
-        <li><span class="rule-num" style="color:var(--accent2);">1980s</span><div class="rule-text"><strong>Adoção global</strong><span>Reguladores como EPA (EUA), ANVISA (Brasil) e REACH (UE) passam a exigir o CAS como identificador oficial em fichas de dados de segurança (FDS/MSDS).</span></div></li>
-        <li><span class="rule-num" style="color:var(--accent2);">Hoje</span><div class="rule-text"><strong>Mais de 200 milhões de substâncias registradas</strong><span>O CAS Registry é o maior banco de dados de substâncias do mundo, com novos compostos adicionados diariamente.</span></div></li>
+        <li><span class="rule-num rule-num--accent2">1907</span><div class="rule-text"><strong>Fundação do Chemical Abstracts Service</strong><span>A ACS cria o CAS para indexar publicações científicas e organizar o crescente número de substâncias descobertas.</span></div></li>
+        <li><span class="rule-num rule-num--accent2">1965</span><div class="rule-text"><strong>Primeiro número CAS atribuído</strong><span>O sistema de numeração é formalizado e começa a ser adotado por laboratórios, indústrias e órgãos regulatórios do mundo todo.</span></div></li>
+        <li><span class="rule-num rule-num--accent2">1980s</span><div class="rule-text"><strong>Adoção global</strong><span>Reguladores como EPA (EUA), ANVISA (Brasil) e REACH (UE) passam a exigir o CAS como identificador oficial em fichas de dados de segurança (FDS/MSDS).</span></div></li>
+        <li><span class="rule-num rule-num--accent2">Hoje</span><div class="rule-text"><strong>Mais de 200 milhões de substâncias registradas</strong><span>O CAS Registry é o maior banco de dados de substâncias do mundo, com novos compostos adicionados diariamente.</span></div></li>
       </ul>
     </div>
+
+  </section>
+
+  <!-- ============================================================
+       EMERGÊNCIAS
+       ============================================================ -->
+  <section id="emergencias" class="section">
+    <div class="page-hero">
+      <div class="eyebrow">PRIMEIROS SOCORROS</div>
+      <h2>Emergências Químicas</h2>
+      <p>Procedimentos de primeiros socorros por classe de reagente. Ligue ANTES de iniciar atendimento se a exposição for grave.</p>
+      <div class="hero-counts">
+        <span class="hero-count">10 classes</span>
+        <span class="hero-count" style="opacity:.35">·</span>
+        <span class="hero-count">37 reagentes</span>
+        <span class="hero-count" style="opacity:.35">·</span>
+        <span class="hero-count">5 cenários/classe</span>
+      </div>
+    </div>
+
+    <!-- Contacts strip -->
+    <div class="emerg-contacts">
+      <div class="emerg-contact">
+        <span class="emerg-chip ciatox">CIATOX</span>
+        <span class="emerg-number">0800 722 6001</span>
+        <span class="emerg-label">Centro de Informação e Assistência Toxicológica · 24 h · gratuito</span>
+      </div>
+      <div class="emerg-contact">
+        <span class="emerg-chip samu">SAMU</span>
+        <span class="emerg-number">192</span>
+        <span class="emerg-label">Serviço de Atendimento Móvel de Urgência</span>
+      </div>
+      <div class="emerg-contact">
+        <span class="emerg-chip bomb">Bombeiros</span>
+        <span class="emerg-number">193</span>
+        <span class="emerg-label">Incêndios, vazamentos e salvamento</span>
+      </div>
+    </div>
+
+    <!-- Reagent quick-search -->
+    <div class="qsearch-wrap">
+      <div class="qsearch-row">
+        <span class="qsearch-icon">🔍</span>
+        <input type="text" class="qsearch-input" id="emergSearchInput"
+               placeholder="Buscar reagente... ex: metanol, cianeto, HgCl₂, fenol"
+               autocomplete="off" oninput="reagentSearch(this,'emerg')">
+        <button class="qsearch-clear" id="emergSearchClear" onclick="clearReagentSearch('emerg')" style="display:none" title="Limpar">✕</button>
+      </div>
+      <div class="qsearch-dropdown" id="emergSearchDropdown" style="display:none"></div>
+      <div class="qref-panel" id="emergQRef" style="display:none"></div>
+    </div>
+
+    <!-- Universal rules -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">REGRAS UNIVERSAIS DE PRIMEIROS SOCORROS</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">🚫</span><div class="rule-text"><strong>NÃO induzir vômito</strong><span>Salvo orientação médica explícita — aspiração pulmonar pode ser fatal para solventes e corrosivos.</span></div></li>
+        <li><span class="rule-num">👕</span><div class="rule-text"><strong>Remover roupas e EPIs contaminados</strong><span>Com cuidado para não contaminar a própria pele. Ensacar e descartar adequadamente.</span></div></li>
+        <li><span class="rule-num">🚿</span><div class="rule-text"><strong>Lavar com água corrente abundante</strong><span>Mínimo 15 min para pele, 20 min para olhos — usar lava-olhos quando disponível.</span></div></li>
+        <li><span class="rule-num">📋</span><div class="rule-text"><strong>Levar a FISPQ ao atendimento médico</strong><span>A Ficha de Informações de Segurança orienta o tratamento — nunca descarte a embalagem antes do atendimento.</span></div></li>
+        <li><span class="rule-num">📢</span><div class="rule-text"><strong>Avisar a chefia/supervisor imediatamente</strong><span>Mesmo após primeiros socorros — todo acidente deve ser registrado e investigado.</span></div></li>
+      </ul>
+    </div>
+
+    <!-- Kit de contenção -->
+    <details class="kit-card">
+      <summary>🧰 Kit de Contenção — Manter disponível no laboratório</summary>
+      <ul class="rules-list">
+        <li><span class="rule-num">🧤</span><div class="rule-text"><strong>EPI básico de emergência</strong><span>Luvas nitrila (vários tamanhos), óculos de proteção, avental resistente e máscara N95 — guardar fora do armário de reagentes, em local de acesso rápido.</span></div></li>
+        <li><span class="rule-num">🏖️</span><div class="rule-text"><strong>Areia fina seca</strong><span>Absorvente universal para a maioria dos derramamentos químicos. Nunca usar serragem (risco de ignição com oxidantes e inflamáveis).</span></div></li>
+        <li><span class="rule-num">🧪</span><div class="rule-text"><strong>Bicarbonato de Sódio (NaHCO₃) a granel</strong><span>Para neutralizar derramamentos de ácidos. Manter pelo menos 500 g em frasco identificado e de fácil acesso.</span></div></li>
+        <li><span class="rule-num">🌿</span><div class="rule-text"><strong>Ácido Cítrico ou vinagre diluído</strong><span>Para neutralizar derramamentos de bases. Manter solução a 10% em frasco identificado.</span></div></li>
+        <li><span class="rule-num">🌡️</span><div class="rule-text"><strong>Papel indicador de pH (fitas)</strong><span>Para verificar se a neutralização atingiu pH 6–9 antes do descarte no esgoto (faixa legal: 5–9, conforme CONAMA 430/2011 · CONAMA 357/2005). Obrigatório em qualquer procedimento de neutralização.</span></div></li>
+        <li><span class="rule-num">🫙</span><div class="rule-text"><strong>Enxofre em pó</strong><span>Específico para derramamentos de <strong>mercúrio metálico líquido (Hg⁰)</strong> — ex.: termômetros quebrados. Cobre o metal líquido formando HgS estável, reduzindo a volatilização. <em>Não usar para sais de mercúrio sólidos (HgCl₂, HgO, HgI₂, HgSO₄) — nesses casos usar areia seca.</em> Manter em frasco identificado próximo à área de mercuriais.</span></div></li>
+        <li><span class="rule-num">🗑️</span><div class="rule-text"><strong>Sacos de resíduo duplos (vermelho/laranja) + identificação</strong><span>Para recolher material absorvente contaminado. Etiqueta mínima: classe, composição, data, responsável.</span></div></li>
+        <li><span class="rule-num">👁️</span><div class="rule-text"><strong>Lava-olhos e chuveiro de emergência</strong><span>Testar mensalmente o funcionamento. Devem ser acessíveis em até 10 segundos a partir de qualquer ponto do laboratório (NR-26).</span></div></li>
+      </ul>
+    </details>
+
+    <!-- INFLAMÁVEIS -->
+    <details id="ec-inflamavel" class="emerg-class-card" style="--ec:var(--inflamavel)">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">🔥</span>
+        <span class="emerg-class-header-title">Inflamáveis e Combustíveis</span>
+        <span class="emerg-risk-badge emerg-risk-moderado">MODERADO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">Acetona</span>
+        <span class="emerg-reagent-chip">Acetato de etila</span>
+        <span class="emerg-reagent-chip">Etanol</span>
+        <span class="emerg-reagent-chip">Álcool isopropílico</span>
+        <span class="emerg-reagent-chip">Metanol</span>
+        <span class="emerg-reagent-chip">Benzeno</span>
+        <span class="emerg-reagent-chip">Ciclohexano</span>
+        <span class="emerg-reagent-chip">Ciclohexanona</span>
+        <span class="emerg-reagent-chip">Éter de petróleo</span>
+        <span class="emerg-reagent-chip">N-Hexano</span>
+        <span class="emerg-reagent-chip">DMF</span>
+        <span class="emerg-reagent-chip">Clorofórmio †</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar a área afetada com água e sabão por no mínimo 15 minutos. Remover imediatamente as roupas e calçados contaminados.</p>
+          <p>Se houver queimadura química ou irritação persistente, encaminhar ao médico com a FISPQ do produto.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água corrente abundante por 15–20 minutos, mantendo as pálpebras abertas. Usar lava-olhos se disponível.</p>
+          <p>Consultar médico se houver irritação persistente, vermelhidão ou visão turva.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores</summary>
+        <div class="emerg-scenario-content">
+          <p>Remover a vítima imediatamente para local com ar fresco. Afrouxar roupas apertadas. Manter em repouso.</p>
+          <div class="emerg-danger">⚠️ <strong>Metanol:</strong> risco de cegueira permanente mesmo sem sintomas imediatos — acionar SAMU urgente para qualquer exposição significativa.</div>
+          <div class="emerg-danger">⚠️ <strong>Benzeno:</strong> agente carcinogênico — encaminhar ao médico sempre, mesmo exposição breve.</div>
+          <div class="emerg-warn">ℹ️ <strong>DMF (N,N-Dimetilformamida):</strong> tóxico sistêmico — consultar médico mesmo sem sintomas imediatos.</div>
+          <div class="emerg-warn">⚠️ <strong>Ciclohexanona:</strong> vapores narcóticos (H336, ponto de fulgor 43°C) — afastar imediatamente para ar fresco; monitorar nível de consciência. Consultar médico se exposição prolongada ou sintomas de tontura/confusão mental persistirem.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p><strong>NÃO induzir vômito</strong> — solventes aspirados para os pulmões causam pneumonite química grave.</p>
+          <p>Ligar imediatamente para o CIATOX: <strong>0800 722 6001</strong>.</p>
+          <div class="emerg-danger">⚠️ <strong>Metanol e Benzeno:</strong> acionar SAMU urgente — ambos são potencialmente fatais em pequenas doses.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p>Eliminar IMEDIATAMENTE todas as fontes de ignição da área (faíscas, chamas abertas, equipamentos elétricos em operação). Ventilar o ambiente.</p>
+          <p>Absorver com areia seca ou terra (nunca serragem — risco de ignição). Recolher em recipiente identificado para descarte especializado.</p>
+          <div class="emerg-danger">🚫 NÃO lavar para o esgoto — solventes causam contaminação ambiental e risco de explosão na rede.</div>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- CORROSIVOS – ÁCIDOS FORTES -->
+    <details id="ec-acidos" class="emerg-class-card" style="--ec:var(--corrosivo)">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">⚗️</span>
+        <span class="emerg-class-header-title">Corrosivos — Ácidos Fortes</span>
+        <span class="emerg-risk-badge emerg-risk-alto">ALTO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">H₂SO₄</span>
+        <span class="emerg-reagent-chip">HCl</span>
+        <span class="emerg-reagent-chip">HNO₃</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar imediatamente com água corrente abundante por no mínimo 20 minutos. <strong>NÃO neutralizar com base na pele</strong> — a reação exotérmica agrava a lesão.</p>
+          <div class="emerg-warn">⚠️ <span class="rchem">H₂SO₄</span> concentrado gera calor intenso ao contato com água — iniciar o fluxo de água de forma abundante e rápida, sem hesitar.</div>
+          <p>Remover roupas contaminadas. Encaminhar ao médico para qualquer área afetada — lesões podem ser mais profundas do que aparentam.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água corrente por no mínimo 20 minutos ininterruptos — usar lava-olhos obrigatoriamente.</p>
+          <div class="emerg-danger">🔴 Atendimento médico OBRIGATÓRIO — ácidos fortes nos olhos podem causar perda permanente da visão.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores</summary>
+        <div class="emerg-scenario-content">
+          <p>Sair imediatamente da área contaminada para ar fresco. <span class="rchem">HCl</span> e <span class="rchem">HNO₃</span> geram vapores altamente irritantes para as vias aéreas.</p>
+          <div class="emerg-danger">⚠️ <strong>HNO₃ (Ácido Nítrico):</strong> pode causar edema pulmonar tardio, com sintomas aparecendo até 24 horas após a exposição. Atendimento médico é OBRIGATÓRIO mesmo sem sintomas imediatos.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p><strong>NÃO induzir vômito</strong> — causa queimaduras graves no esôfago na subida. Dar 50–100 mL de água para diluir.</p>
+          <p>Acionar CIATOX (0800 722 6001) e SAMU (192) imediatamente.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p>Usar EPI completo obrigatoriamente: luvas de neoprene, óculos de proteção, avental resistente a ácidos.</p>
+          <p><strong>H₂SO₄ concentrado:</strong> cobrir imediatamente com areia seca para absorção e contenção física — <strong>NÃO aplicar <span class="rchem">NaHCO₃</span> diretamente sobre o ácido concentrado</strong> (reação exotérmica intensa, com efervescência violenta e projeção de gotículas corrosivas). Somente após o ácido estar completamente absorvido pela areia, aplicar <span class="rchem">NaHCO₃</span> ao redor da área e lavar com água abundante.</p>
+          <p><strong>HCl e HNO₃ diluídos:</strong> neutralizar com <span class="rchem">NaHCO₃</span> em pó aplicado lentamente até cessar a efervescência; absorver com areia; lavar com água.</p>
+          <div class="emerg-warn">⚠️ <span class="rchem">HNO₃</span>: nunca misturar com solventes orgânicos — risco de reação violenta. Empresa especializada para grandes volumes.</div>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- CORROSIVOS – BASES FORTES -->
+    <details id="ec-bases" class="emerg-class-card" style="--ec:var(--base)">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">🔵</span>
+        <span class="emerg-class-header-title">Corrosivos — Bases Fortes</span>
+        <span class="emerg-risk-badge emerg-risk-alto">ALTO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">NaOH</span>
+        <span class="emerg-reagent-chip">KOH</span>
+        <span class="emerg-reagent-chip">NH₄OH</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água corrente abundante por 20 minutos. <strong>NÃO neutralizar com ácido na pele.</strong></p>
+          <div class="emerg-warn">⚠️ <span class="rchem">NaOH</span> e <span class="rchem">KOH</span> causam lesões profundas que podem demorar a aparecer — não subestime a extensão do dano.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água corrente por no mínimo 20 minutos. Atendimento médico obrigatório.</p>
+          <div class="emerg-danger">🔴 Bases fortes causam lesões oculares mais graves do que ácidos — a penetração nos tecidos é mais profunda e progressiva.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores</summary>
+        <div class="emerg-scenario-content">
+          <p>Remover para ar fresco. <span class="rchem">NH₄OH</span> libera vapores de amônia — irritação intensa das vias aéreas superiores.</p>
+          <p>Acionar SAMU (192) se houver tosse intensa, dificuldade respiratória ou queimação nas vias aéreas.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p><strong>NÃO induzir vômito.</strong> Dar 50–100 mL de água para diluir. Acionar CIATOX e SAMU imediatamente.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p>Para bases diluídas: neutralizar com ácido cítrico diluído ou <strong>solução de ácido acético a 5% (p/v)</strong> — não usar vinagre (composição variável, inadequado como reagente de segurança conforme NR-26). Absorver com areia. Lavar com água.</p>
+          <p>Para bases concentradas (<span class="rchem">NaOH</span>/<span class="rchem">KOH</span>): EPI obrigatório; empresa especializada para grandes volumes.</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- OXIDANTES -->
+    <details id="ec-oxidantes" class="emerg-class-card" style="--ec:var(--oxidante)">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">💥</span>
+        <span class="emerg-class-header-title">Oxidantes</span>
+        <span class="emerg-risk-badge emerg-risk-alto">ALTO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">KMnO₄</span>
+        <span class="emerg-reagent-chip">H₂O₂</span>
+        <span class="emerg-reagent-chip">K₂Cr₂O₇</span>
+        <span class="emerg-reagent-chip">Cromato de Potássio</span>
+        <span class="emerg-reagent-chip">Hipoclorito de Cálcio</span>
+        <span class="emerg-reagent-chip">AgNO₃</span>
+        <span class="emerg-reagent-chip">Persulfato de Amônio</span>
+        <span class="emerg-reagent-chip">Bromato de Potássio</span>
+        <span class="emerg-reagent-chip">Iodato de Potássio</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 15 minutos. <span class="rchem">KMnO₄</span> mancha a pele de marrom-escuro (manganês — não tóxico por contato breve, mas concentrado causa queimadura).</p>
+          <div class="emerg-danger">⚠️ <span class="rchem">K₂Cr₂O₇</span> e cromatos: absorção cutânea é tóxica — encaminhar ao médico mesmo sem sintomas.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 20 minutos.</p>
+          <div class="emerg-danger">🔴 Cromatos (<span class="rchem">K₂Cr₂O₇</span> e similares): irritação ocular severa — médico obrigatório.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores/poeiras</summary>
+        <div class="emerg-scenario-content">
+          <p>Remover para ar fresco. <span class="rchem">H₂O₂</span> concentrado e hipoclorito liberam vapores oxidantes irritantes.</p>
+          <div class="emerg-danger">⚠️ <strong>Persulfato de Amônio:</strong> sensitizador respiratório (H334/H317) — pode induzir asma ocupacional mesmo em exposições de baixa intensidade e repetidas. Qualquer inalação de pó deve ser comunicada ao médico do trabalho; trabalhadores sensibilizados não devem mais manipular o produto.</div>
+          <p>Consultar médico se tosse persistente ou dificuldade respiratória.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p>Ligar para CIATOX (0800 722 6001) imediatamente.</p>
+          <div class="emerg-danger">⚠️ <span class="rchem">H₂O₂</span>: NÃO induzir vômito — libera <span class="rchem">O₂</span> no estômago, com risco de distensão e perfuração gástrica.</div>
+          <div class="emerg-danger">⚠️ <span class="rchem">K₂Cr₂O₇</span>: tóxico sistêmico grave — acionar SAMU urgente.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p><strong>NÃO misturar com matéria orgânica</strong> — oxidantes podem causar ignição espontânea.</p>
+          <p><span class="rchem">KMnO₄</span>: neutralizar com solução de ácido ascórbico ou tiossulfato de sódio até descoloração; absorver com areia.</p>
+          <p><strong>AgNO₃:</strong> recolher o sólido ou solução em recipiente identificado — não lavar no esgoto (contaminação por prata). <em>Nota: em concentrações de laboratório, o <span class="rchem">AgNO₃</span> atua principalmente como tóxico e corrosivo (H290, H314, H410), não como oxidante significativo — o perigo dominante no derramamento é a toxicidade e a corrosão, não a ignição.</em></p>
+          <p>Lavar a área com água abundante após contenção.</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- TÓXICOS – MERCURIAIS -->
+    <details id="ec-mercuriais" class="emerg-class-card" style="--ec:var(--toxico)">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">☠️</span>
+        <span class="emerg-class-header-title">Tóxicos — Compostos de Mercúrio</span>
+        <span class="emerg-risk-badge emerg-risk-extremo">EXTREMO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">HgCl₂</span>
+        <span class="emerg-reagent-chip">HgO</span>
+        <span class="emerg-reagent-chip">HgI₂</span>
+        <span class="emerg-reagent-chip">HgSO₄</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água e sabão por 15 minutos.</p>
+          <div class="emerg-danger">🔴 <span class="rchem">HgCl₂</span> é altamente absorvido pela pele — atendimento médico OBRIGATÓRIO mesmo sem sintomas imediatos. Informar que é composto de mercúrio.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 20 minutos. Atendimento médico obrigatório.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores</summary>
+        <div class="emerg-scenario-content">
+          <p>Sair imediatamente da área. Vapores de compostos de mercúrio são neurotóxicos acumulativos — danos neurológicos podem ser tardios.</p>
+          <div class="emerg-danger">🔴 Acionar SAMU (192) urgente. Informar explicitamente que é exposição a MERCÚRIO.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p><strong>NÃO induzir vômito.</strong> Ir ao pronto-socorro urgente. Ligar para CIATOX imediatamente.</p>
+          <div class="emerg-danger">🔴 Informar ao médico que se trata de composto de mercúrio — há antídotos específicos (quelantes) que devem ser administrados precocemente.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <div class="emerg-danger">🔴 EVACUAÇÃO DO LOCAL. Não usar aspirador — dispersa vapor de mercúrio no ar.</div>
+          <div class="emerg-warn">⚠️ <strong>Distinguir o tipo de derramamento antes de agir:</strong></div>
+          <p><strong>Compostos sólidos de Hg (HgCl₂, HgO, HgI₂, HgSO₄):</strong> absorver com areia seca ou terra diatomácea (NÃO usar enxofre em pó — desnecessário para sais sólidos e não reduz o risco). Recolher com espátula em frasco de vidro hermético. Não varrer — usar pá e recolhedora descartáveis.</p>
+          <p><strong>Mercúrio metálico líquido (Hg⁰)</strong> — ex. termômetros quebrados: cobrir com enxofre em pó para fixar o metal, formando <span class="rchem">HgS</span> estável e reduzindo a volatilização. Recolher com espátula em frasco de vidro hermético de boca larga.</p>
+          <p>Área deve ser avaliada para contaminação residual por profissional habilitado após qualquer derramamento.</p>
+          <p>Ligar para o CIATOX (0800 722 6001) e acionar empresa especializada em resíduos de mercúrio (CONAMA 358/2005 · ABNT NBR 10004 Classe I).</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- TÓXICOS – CIANETOS/AZIDAS -->
+    <details id="ec-cianetos" class="emerg-class-card" style="--ec:#c060ff">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">☠️</span>
+        <span class="emerg-class-header-title">Tóxicos — Cianetos e Azidas</span>
+        <span class="emerg-risk-badge emerg-risk-extremo">EXTREMO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">KCN</span>
+        <span class="emerg-reagent-chip">NaN₃</span>
+        <span class="emerg-reagent-chip">Nitroprussiato de Sódio</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar IMEDIATAMENTE com água e sabão.</p>
+          <div class="emerg-danger">🔴 <span class="rchem">KCN</span> e <span class="rchem">NaN₃</span> são absorvidos rapidamente pela pele — acionar SAMU urgente para qualquer exposição. Informar que é CIANETO ou AZIDA.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 15 minutos. Acionar SAMU urgente.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores</summary>
+        <div class="emerg-scenario-content">
+          <div class="emerg-danger">🔴 EMERGÊNCIA MÁXIMA: <span class="rchem">KCN</span> em contato com ácidos libera ácido cianídrico (<span class="rchem">HCN</span>) — letal em minutos. <span class="rchem">NaN₃</span> com ácidos libera <span class="rchem">HN₃</span> — igualmente grave.</div>
+          <p>Sair imediatamente da área. Acionar SAMU (192) urgente.</p>
+          <div class="emerg-danger">🔴 Mencionar EXPLICITAMENTE "CIANETO" ao SAMU — o antídoto específico (hidroxicobalamina) precisa ser solicitado com antecedência.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p><strong>NÃO induzir vômito.</strong> Acionar SAMU (192) urgente.</p>
+          <div class="emerg-danger">🔴 Informar EXPLICITAMENTE ao SAMU que é CIANETO — o acesso ao antídoto específico (hidroxicobalamina) depende dessa informação.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <div class="emerg-danger">🔴 EVACUAÇÃO IMEDIATA. NÃO misturar com ácidos — libera HCN ou HN₃ letais.</div>
+          <p>Chamar equipe especializada. Neutralização de <span class="rchem">KCN</span> com hipoclorito alcalino (<span class="rchem">NaOH</span> + <span class="rchem">NaClO</span>) deve ser feita apenas por profissional treinado.</p>
+          <p><span class="rchem">NaN₃</span>: empresa especializada obrigatória — não misturar com água quente ou metais pesados.</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- TÓXICOS – ORGÂNICOS E OUTROS -->
+    <details id="ec-toxicos-org" class="emerg-class-card" style="--ec:#9060cc">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">🧪</span>
+        <span class="emerg-class-header-title">Tóxicos — Orgânicos e Outros</span>
+        <span class="emerg-risk-badge emerg-risk-alto">ALTO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">Benzeno</span>
+        <span class="emerg-reagent-chip">Clorofórmio</span>
+        <span class="emerg-reagent-chip">Fenol</span>
+        <span class="emerg-reagent-chip">O-Toluidina</span>
+        <span class="emerg-reagent-chip">Meta-Arsenito de Sódio</span>
+        <span class="emerg-reagent-chip">Dithizon</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água e sabão por 15 minutos.</p>
+          <div class="emerg-danger">⚠️ <strong>Fenol:</strong> absorção dérmica rapidíssima e silenciosa. Usar polietilenoglicol (PEG 400) se disponível, seguido de água abundante + sabão. Atendimento médico urgente.</div>
+          <div class="emerg-warn">⚠️ <strong>O-Toluidina:</strong> causa metemoglobinemia — o sangue perde capacidade de transportar O₂. Médico urgente.</div>
+          <div class="emerg-warn">⚠️ <strong>Arsenito de Sódio:</strong> tóxico acumulativo — médico mesmo sem sintomas imediatos.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 20 minutos. Atendimento médico obrigatório para fenol, arsenito e O-Toluidina.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores</summary>
+        <div class="emerg-scenario-content">
+          <p>Remover para ar fresco imediatamente.</p>
+          <div class="emerg-danger">⚠️ <strong>Benzeno:</strong> carcinogênico reconhecido — encaminhar ao médico sempre, mesmo exposição breve.</div>
+          <div class="emerg-warn">⚠️ <strong>Clorofórmio:</strong> narcótico — inconsciência possível em exposição elevada. Manter vítima acordada e monitorada.</div>
+          <div class="emerg-danger">⚠️ <strong>Fenol:</strong> vapores corrosivos para vias aéreas — médico urgente.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p>Acionar SAMU urgente para todos os reagentes desta classe. <strong>NÃO induzir vômito</strong> para benzeno e clorofórmio.</p>
+          <p>Arsenito de Sódio: pronto-socorro urgente — informar o reagente específico.</p>
+          <p>Mencionar o reagente específico ao CIATOX (0800 722 6001) para orientação de antídotos.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p><strong>Fenol:</strong> absorver com areia seca ou vermiculita (NÃO usar serragem). Recolher com espátula em recipiente hermético identificado para descarte por empresa especializada. <strong>NÃO neutralizar com bicarbonato de sódio</strong> — a efervescência do <span class="rchem">CO₂</span> gerado dispersa gotículas de fenol no ar; além disso, o fenolato de sódio formado (<span class="rchem">C₆H₅ONa</span>) é igualmente tóxico, solúvel em água e de difícil confinamento. EPI completo obrigatório — luvas neoprene, protetor facial, avental de PVC.</p>
+          <p><strong>Benzeno / Clorofórmio:</strong> eliminar fontes de ignição; ventilação máxima; absorver com areia; empresa especializada obrigatória.</p>
+          <p><strong>Arsenito de Sódio:</strong> EPI completo; recolher sem dispersar pó; empresa especializada obrigatória — nunca lavar no esgoto.</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- ÁCIDOS NÃO CORROSIVOS -->
+    <details id="ec-acidos-nc" class="emerg-class-card" style="--ec:var(--acido)">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">🧫</span>
+        <span class="emerg-class-header-title">Ácidos Não Corrosivos</span>
+        <span class="emerg-risk-badge emerg-risk-baixo">BAIXO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">Ác. Acético / Glacial</span>
+        <span class="emerg-reagent-chip">Ác. Bórico</span>
+        <span class="emerg-reagent-chip">Ác. Cítrico</span>
+        <span class="emerg-reagent-chip">Ác. Fórmico</span>
+        <span class="emerg-reagent-chip">Ác. Fosfórico</span>
+        <span class="emerg-reagent-chip">Ác. Salicílico</span>
+        <span class="emerg-reagent-chip">Ác. Ascórbico</span>
+        <span class="emerg-reagent-chip">Ác. Benzóico</span>
+        <span class="emerg-reagent-chip">Ác. Sulfanílico</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água corrente por 15 minutos. Remover roupas contaminadas.</p>
+          <div class="emerg-warn">⚠️ Ácido acético glacial em contato prolongado pode causar queimaduras — lavar imediatamente e com generosidade.</div>
+          <p>Ácido fórmico em área grande: médico — é tóxico sistêmico em exposições significativas.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 15 minutos. Consultar médico se houver irritação persistente.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores</summary>
+        <div class="emerg-scenario-content">
+          <p>Remover para ar fresco. Vapores de ácido acético e fórmico são irritantes das vias aéreas.</p>
+          <p>Ácido fórmico em alta concentração: consultar médico.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p>Dar água (100–200 mL) para diluir. <strong>NÃO induzir vômito</strong> para ácido fórmico (tóxico sistêmico). Ligar para CIATOX (0800 722 6001). <em>Leite: não oferecer sem orientação — o CIATOX avalia a conveniência caso a caso dependendo do reagente específico; não há recomendação universal de leite para ingestão de ácidos fracos.</em></p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p>Neutralizar com bicarbonato de sódio (NaHCO₃). Verificar pH com fita indicadora antes de lavar com água. Baixo risco ambiental em pequenas quantidades após neutralização confirmada (pH 6–9).</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- BASES NÃO CORROSIVAS -->
+    <details id="ec-bases-nc" class="emerg-class-card" style="--ec:#5fa0e0">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">🔵</span>
+        <span class="emerg-class-header-title">Bases Não Corrosivas</span>
+        <span class="emerg-risk-badge emerg-risk-baixo">BAIXO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">Ca(OH)₂</span>
+        <span class="emerg-reagent-chip">Carbonato de Sódio</span>
+        <span class="emerg-reagent-chip">Bicarbonato de Potássio</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 10 minutos.</p>
+          <div class="emerg-warn">ℹ️ Ca(OH)₂ em pó: remover o excesso de pó com escova seca ANTES de lavar com água — a adição de água a pó concentrado gera calor localizado.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 15 minutos. Consultar médico se irritação persistir.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores/poeiras</summary>
+        <div class="emerg-scenario-content">
+          <p>Ca(OH)₂ em pó pode irritar as vias aéreas superiores. Remover para ar fresco. Observação.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p>Dar 50 mL de água para diluir. Observar. Ligar para CIATOX se surgirem sintomas.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p>Neutralizar com ácido cítrico diluído ou vinagre. Limpar com água. Risco ambiental baixo em pequenas quantidades.</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+    <!-- SAIS COM ATENÇÃO -->
+    <details id="ec-sais" class="emerg-class-card" style="--ec:var(--inerte)">
+      <summary class="emerg-class-header">
+        <div class="emerg-header-row">
+        <span class="emerg-class-header-emoji">🧂</span>
+        <span class="emerg-class-header-title">Sais com Atenção</span>
+        <span class="emerg-risk-badge emerg-risk-baixo">BAIXO</span>
+        </div>
+<div class="emerg-reagent-list">
+        <span class="emerg-reagent-chip">NH₄Cl</span>
+        <span class="emerg-reagent-chip">Oxalato de Sódio</span>
+        <span class="emerg-reagent-chip">Sulfato de Cobre II</span>
+        <span class="emerg-reagent-chip">Sulfato de Ferro</span>
+        <span class="emerg-reagent-chip">Sulfato de Manganês</span>
+        <span class="emerg-reagent-chip">Nitrato de Prata</span>
+      </div>
+      </summary>
+      <div class="emerg-class-body">
+            <details class="emerg-scenario">
+        <summary>🩹 Contato com a pele</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água. Oxalato de sódio é irritante. Sulfatos de metais pesados (Cu, Mn, Fe): lavar bem por 10–15 min.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>👁️ Contato com os olhos</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água por 10–15 minutos. Consultar médico se irritação persistir.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>💨 Inalação de vapores/poeiras</summary>
+        <div class="emerg-scenario-content">
+          <p>Cloreto de amônio gera vapores irritantes quando aquecido. Oxalato e outros sais em pó: irritantes das vias aéreas. Remover para ar fresco.</p>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🚫 Ingestão</summary>
+        <div class="emerg-scenario-content">
+          <p>Cloreto de amônio: irritante — dar água; observar.</p>
+          <div class="emerg-warn">⚠️ <strong>Oxalato de Sódio:</strong> tóxico — forma cristais de oxalato de cálcio nos rins. Ligar para CIATOX.</div>
+          <div class="emerg-warn">⚠️ <strong>Sulfatos de metais pesados:</strong> ligar para CIATOX. Sulfato de mercúrio: pronto-socorro urgente.</div>
+        </div>
+      </details>
+      <details class="emerg-scenario">
+        <summary>🧯 Derramamento / Spill</summary>
+        <div class="emerg-scenario-content">
+          <p>Lavar com água. Sais de metais pesados (Cu, Mn, Fe, Ag, Hg): recolher para descarte especializado — nunca lavar no esgoto.</p>
+        </div>
+      </details>
+      </div>
+    </details>
+
+  </section>
+
+  <!-- ============================================================
+       DESCARTE
+       ============================================================ -->
+  <section id="descarte" class="section">
+    <div class="page-hero">
+      <div class="eyebrow">GESTÃO DE RESÍDUOS</div>
+      <h2>Descarte de Reagentes</h2>
+      <p>Procedimentos de segregação e descarte por classe. Referências: CONAMA 358/2005 · ANVISA RDC 222/2018 · ABNT NBR 10004.</p>
+      <div class="hero-counts">
+        <span class="hero-count">9 classes de resíduos</span>
+        <span class="hero-count">37 reagentes catalogados</span>
+        <span class="hero-count">ABNT NBR 10004</span>
+      </div>
+    </div>
+
+    <!-- Reagent quick-search -->
+    <div class="qsearch-wrap">
+      <div class="qsearch-row">
+        <span class="qsearch-icon">🔍</span>
+        <input type="text" class="qsearch-input" id="descarteSearchInput"
+               placeholder="Buscar reagente... ex: metanol, cianeto, HgCl₂, fenol"
+               autocomplete="off" oninput="reagentSearch(this,'descarte')">
+        <button class="qsearch-clear" id="descarteSearchClear" onclick="clearReagentSearch('descarte')" style="display:none" title="Limpar">✕</button>
+      </div>
+      <div class="qsearch-dropdown" id="descarteSearchDropdown" style="display:none"></div>
+      <div class="qref-panel" id="descarteQRef" style="display:none"></div>
+    </div>
+
+    <!-- Princípios gerais -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">PRINCÍPIOS GERAIS — GESTÃO DE RESÍDUOS QUÍMICOS</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">🚫</span><div class="rule-text"><strong>Nunca descartar no esgoto sem tratamento</strong><span>Resíduos perigosos no esgoto violam a PNRS (Lei 12.305/2010) e o CONAMA 357/2005 — sujeito a multa e responsabilidade penal.</span></div></li>
+        <li><span class="rule-num">🔀</span><div class="rule-text"><strong>Nunca misturar classes diferentes</strong><span>Mistura de resíduos pode gerar reações perigosas, inviabilizar o tratamento e encarecer o descarte.</span></div></li>
+        <li><span class="rule-num">⚗️</span><div class="rule-text"><strong>Segregar: halogenados vs. não halogenados</strong><span>Solventes halogenados (clorofórmio, DCM) e não halogenados (acetona, etanol) devem ser mantidos em bombonas separadas.</span></div></li>
+        <li><span class="rule-num">🏷️</span><div class="rule-text"><strong>Modelo de etiqueta obrigatória para frascos de resíduo</strong><span>Incluir: <em>RESÍDUO QUÍMICO | Classe: [NBR 10004] | Composição: [...] | Data de abertura: [...] | Responsável: [...] | Setor: [...]</em> — afixar no frasco assim que iniciada a coleta.</span></div></li>
+        <li><span class="rule-num">🏢</span><div class="rule-text"><strong>Empresa licenciada obrigatória para Classe I — solicitar MTR</strong><span>Resíduos perigosos exigem empresa com licença IBAMA/SEMA. Exigir o Manifesto de Transporte de Resíduos (MTR) a cada coleta — guarda-lo por 5 anos (CONAMA 358/2005).</span></div></li>
+        <li><span class="rule-num">🌡️</span><div class="rule-text"><strong>Verificar pH antes de qualquer descarte no esgoto</strong><span>Usar fita indicadora de pH ou pHmetro. Faixa legal: 5,0 a 9,0 (CONAMA 430/2011, Art. 16, que complementa o CONAMA 357/2005, Art. 34). Boa prática laboratorial: neutralizar até pH 6,0–8,0 para maior segurança. Só descartar após confirmação.</span></div></li>
+      </ul>
+    </div>
+
+    <!-- INFLAMÁVEIS -->
+    <details id="dc-inflamavel" class="descarte-card" style="--dc:var(--inflamavel)">
+      <summary class="descarte-card-title">🔥 Inflamáveis e Combustíveis <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Resíduo Classe I — coleta por empresa licenciada IBAMA obrigatória para todos os solventes.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><strong>Segregar obrigatoriamente em bombonas separadas por categoria:</strong> (1) solventes halogenados (clorofórmio, diclorometano) — bombona "HALOGENADOS"; (2) solventes não halogenados comuns (acetona, etanol, isopropanol, hexano) — bombona "NÃO HALOGENADOS"; (3) DMF (N,N-Dimetilformamida) — NÃO é halogenada (fórmula C₃H₇NO, sem halogênio) — segregar em bombona própria identificada "DMF — TERATOGÊNICO" por sua toxicidade e incompatibilidade química específica.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Armazenar em bombona fechada, em local ventilado, longe de fontes de ignição — nunca em vidros ou recipientes frágeis.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Metanol pode ser combinado com outros álcoois não halogenados compatíveis (etanol, isopropanol) para incineração conjunta — nunca misturar com clorofórmio ou outros halogenados.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Benzeno: resíduo de altíssima periculosidade (carcinogênico IARC Grupo 1) — <strong>NÃO misturar com nenhum outro solvente, halogenado ou não</strong>. Segregar em bombona própria identificada "BENZENO — CARCINOGÊNICO" e encaminhar para empresa especializada.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>NÃO misturar com soluções aquosas, ácidos ou bases — risco de reação e inviabilização do tratamento.</span></div>
+      </div>
+    </details>
+
+    <!-- CORROSIVOS ÁCIDOS -->
+    <details id="dc-acidos" class="descarte-card" style="--dc:var(--corrosivo)">
+      <summary class="descarte-card-title">⚗️ Corrosivos — Ácidos Fortes</summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>H₂SO₄, HCl <strong>diluídos (&lt; 5%):</strong> neutralizar com NaHCO₃ até pH 6–8; descartar no esgoto após confirmação de pH. <span class="descarte-tag tag-neutro">NEUTRALIZAÇÃO</span> <span class="descarte-tag tag-esgoto">ESGOTO</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>H₂SO₄, HCl <strong>concentrados:</strong> empresa especializada obrigatória. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>HNO₃ (qualquer concentração): empresa especializada — nunca misturar com solventes orgânicos. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>H₂SO₄ concentrado: não adicionar água diretamente — reação exotérmica violenta. Empresa especializada trata com equipamentos adequados.</span></div>
+      </div>
+    </details>
+
+    <!-- CORROSIVOS BASES -->
+    <details id="dc-bases" class="descarte-card" style="--dc:var(--base)">
+      <summary class="descarte-card-title">🔵 Corrosivos — Bases Fortes</summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">NaOH</span>, <span class="rchem">KOH</span> <strong>diluídos (&lt; 5%):</strong> neutralizar com <span class="rchem">HCl</span> diluído até pH 6–8; descartar no esgoto. <span class="descarte-tag tag-neutro">NEUTRALIZAÇÃO</span> <span class="descarte-tag tag-esgoto">ESGOTO</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>NaOH, KOH <strong>concentrados:</strong> empresa especializada. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">NH₄OH</span>: neutralizar com ácido acético diluído <strong>obrigatoriamente em capela química de exaustão (NR-26, item 26.13)</strong> — libera vapores de amônia (irritante grave das vias aéreas; NR-26 exige controle de exposição). Pequenas quantidades neutralizadas (acetato de amônio, pH 6–9) podem ir ao esgoto. <span class="descarte-tag tag-neutro">NEUTRALIZAÇÃO (capela de exaustão)</span></span></div>
+      </div>
+    </details>
+
+    <!-- OXIDANTES -->
+    <details id="dc-oxidantes" class="descarte-card" style="--dc:var(--oxidante)">
+      <summary class="descarte-card-title">💥 Oxidantes</summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">KMnO₄</span> em <strong>solução diluída (≤ 1 g/L):</strong> reduzir com ácido ascórbico ou tiossulfato de sódio em excesso até descoloração completa; confirmar pH 6–9; descartar no esgoto verificando com a concessionária local o limite aplicável — a referência federal para <span class="rchem">Mn</span> em corpos d'água é <strong>0,1 mg/L</strong> (CONAMA 357/2005, Art. 34, Classe 1/2), mais restritiva que os parâmetros de lançamento; concessionárias podem adotar limites próprios. <strong>KMnO₄ concentrado ou em pó:</strong> empresa especializada obrigatória — Classe I (ABNT NBR 10004). <span class="descarte-tag tag-neutro">REDUÇÃO + NEUTRALIZAÇÃO (diluído)</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">H₂O₂</span> <strong>diluída:</strong> diluir com água em área ventilada; aguardar decomposição espontânea; descartar no esgoto. <span class="descarte-tag tag-esgoto">ESGOTO (diluída)</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">H₂O₂</span> <strong>concentrada (≥ 30%):</strong> empresa especializada. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Dicromatos e Cromatos (<span class="rchem">K₂Cr₂O₇</span>, Cromato de Potássio, Bicromato): empresa especializada OBRIGATÓRIA — cromo hexavalente é carcinogênico; nunca descartar no esgoto. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">AgNO₃</span>: recuperar prata por precipitação com <span class="rchem">NaCl</span> quando possível (valor econômico); resíduo restante: empresa especializada. <span class="descarte-tag tag-especial">RECUPERAÇÃO / EMPRESA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Hipoclorito de Cálcio: neutralizar com tiossulfato de sódio; descartar solução neutra no esgoto. <span class="descarte-tag tag-esgoto">ESGOTO (neutralizado)</span></span></div>
+      </div>
+    </details>
+
+    <!-- TÓXICOS MERCURIAIS -->
+    <details id="dc-mercuriais" class="descarte-card" style="--dc:var(--toxico)">
+      <summary class="descarte-card-title">☠️ Tóxicos — Compostos de Mercúrio <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA — SEM EXCEÇÕES</span></summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Empresa licenciada IBAMA obrigatória — sem exceções. Nenhum composto de mercúrio pode ser descartado no esgoto ou em lixo comum.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Armazenar em frasco de vidro de boca larga com tampa hermética e dupla vedação (saco plástico resistente sobre a tampa).</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Etiqueta obrigatória: <em>"RESÍDUO DE MERCÚRIO — ALTAMENTE TÓXICO — CLASSE I"</em> com data, responsável e composição.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Nunca lavar recipientes que contiveram mercúrio na pia do laboratório — risco de contaminação ambiental grave.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Registrar no sistema de gestão de resíduos do laboratório (CONAMA 358/2005 · ABNT NBR 10004).</span></div>
+      </div>
+    </details>
+
+    <!-- TÓXICOS CIANETOS -->
+    <details id="dc-cianetos" class="descarte-card" style="--dc:#c060ff">
+      <summary class="descarte-card-title">☠️ Tóxicos — Cianetos e Azidas <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA — SEM EXCEÇÕES</span></summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Empresa especializada obrigatória. Armazenar separado de TODOS os outros resíduos, especialmente ácidos.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Etiqueta: <em>"RESÍDUO DE CIANETO — EXTREMAMENTE TÓXICO"</em> ou <em>"RESÍDUO DE AZIDA — EXTREMAMENTE TÓXICO"</em>.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>KCN pode ser destruído por oxidação controlada com hipoclorito alcalino (NaOH + NaClO) — processo técnico que deve ser realizado apenas por profissional habilitado, nunca de forma amadora.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>NaN₃: empresa especializada; não misturar com água quente (reação), metais pesados ou ácidos.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Jamais descartar no esgoto — risco de formação de HCN ou HN₃ na rede de esgoto com consequências graves.</span></div>
+      </div>
+    </details>
+
+    <!-- TÓXICOS ORGÂNICOS -->
+    <details id="dc-toxicos-org" class="descarte-card" style="--dc:#9060cc">
+      <summary class="descarte-card-title">🧪 Tóxicos — Orgânicos e Outros <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Benzeno: resíduo de altíssima periculosidade (carcinogênico IARC Grupo 1) — empresa especializada obrigatória. <strong>Benzeno NÃO é um solvente halogenado</strong> (fórmula C₆H₆, sem halogênio) — <strong>NÃO misturar com bombonas de halogenados (clorofórmio, DCM)</strong> nem com não halogenados comuns. Segregar em bombona própria rotulada "BENZENO — CARCINOGÊNICO CLASSE I".</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Clorofórmio: resíduo halogenado — empresa especializada para incineração controlada.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Fenol: empresa especializada; pequenas quantidades podem ser diluídas em solvente não halogenado compatível para incineração conjunta.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Arsenito de Sódio: resíduo inorgânico tóxico — empresa especializada; nunca lavar no esgoto.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>O-Toluidina: empresa especializada — segregar de solventes não halogenados.</span></div>
+      </div>
+    </details>
+
+    <!-- ÁCIDOS NÃO CORROSIVOS -->
+    <details id="dc-acidos-nc" class="descarte-card" style="--dc:var(--acido)">
+      <summary class="descarte-card-title">🧫 Ácidos Não Corrosivos</summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>H₃BO₃, ácido cítrico, ácido acético <strong>diluído (&lt; 5%)</strong>: neutralizar com NaHCO₃ até pH 6–8; descartar no esgoto. <span class="descarte-tag tag-esgoto">ESGOTO (diluído)</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Ácido acético glacial / concentrado: empresa especializada. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Ácido fórmico: empresa especializada — <strong>tóxico sistêmico E inflamável (Classe 3c, ponto de fulgor 69°C)</strong>. Armazenar em bombona de resíduos de solventes inflamáveis não halogenados, segregado de ácidos corrosivos e oxidantes. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Ácidos sólidos (salicílico, ascórbico, benzóico): dissolver em água, neutralizar com NaHCO₃; solução neutra: esgoto; resíduo sólido concentrado: aterro industrial. <span class="descarte-tag tag-neutro">NEUTRALIZAÇÃO</span></span></div>
+      </div>
+    </details>
+
+    <!-- BASES NÃO CORROSIVAS -->
+    <details id="dc-bases-nc" class="descarte-card" style="--dc:#5fa0e0">
+      <summary class="descarte-card-title">🔵 Bases Não Corrosivas</summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Carbonato de sódio, hidróxido de cálcio <strong>diluídos (&lt; 5%)</strong>: neutralizar com ácido acético ou cítrico diluído até pH 6–8; descartar no esgoto. <span class="descarte-tag tag-esgoto">ESGOTO (diluído)</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Concentrados ou grandes volumes: empresa especializada. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      </div>
+    </details>
+
+    <!-- SAIS E INERTES -->
+    <details id="dc-sais" class="descarte-card" style="--dc:var(--inerte)">
+      <summary class="descarte-card-title">🧂 Sais e Inertes</summary>
+      <div class="descarte-card-body">
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>NaCl, Na₂SO₄, fosfatos em solução aquosa com pH neutro: esgoto. <span class="descarte-tag tag-esgoto">ESGOTO</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Sais de metais pesados (Cu, Mn, Fe, Ag, Hg, Pb): empresa especializada — nunca descartar no esgoto. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Oxalato de Sódio: empresa especializada (tóxico — forma cristais de oxalato de cálcio nos rins). <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Tiossulfato, cloreto de amônio em solução diluída com pH neutro: esgoto. <span class="descarte-tag tag-esgoto">ESGOTO (diluído)</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Nitrato de Prata: recuperar prata por precipitação com NaCl (valor econômico); resíduo: empresa especializada. <span class="descarte-tag tag-especial">RECUPERAÇÃO / EMPRESA</span></span></div>
+      </div>
+    </details>
 
   </section>
 
@@ -481,8 +1337,8 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <div class="logo-icon" style="width:26px;height:26px;">
-        <img src="assets/img/logo.PNG" style="width:22px;height:22px;object-fit:contain;">
+      <div class="logo-icon logo-icon--sm">
+        <img src="assets/img/logo.PNG" alt="NADF">
       </div>
       <div>
         <div class="footer-brand-name">Organização de Reagentes</div>
@@ -522,7 +1378,7 @@
 
   <div class="footer-bottom">
     <div class="footer-bottom-left">© 2026 NADF — Núcleo Analítico de Desenvolvimento Farmacêutico · UNIFENAS</div>
-    <div class="footer-bottom-right">v2.0 · Última atualização: Jun 2026</div>
+    <div class="footer-bottom-right">Alfa v3.0.5 · Última atualização: Jun 2026</div>
   </div>
 </footer>
 
