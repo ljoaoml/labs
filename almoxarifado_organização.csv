@@ -1,0 +1,171 @@
+﻿Parede;Cód. Prateleira;Nível (1=base 6=topo);Descrição do Nível;Reagente / Item;Controle PF/EB/COFRE;Qtd. Frascos (preencher);Observações de Segurança
+Esquerda (Inflamáveis);L1;1;P1 — Base;Benzeno;PF Lista II;;Armário antichama. SIPROQUIM 2 mensal.
+Esquerda (Inflamáveis);L1;1;P1 — Base;Tolueno;PF Lista II;;Armário antichama. SIPROQUIM 2 mensal.
+Esquerda (Inflamáveis);L1;1;P1 — Base;Ciclohexano;;;Armário antichama.
+Esquerda (Inflamáveis);L1;1;P1 — Base;Ciclohexanona;;;Armário antichama. Frascos grandes (1L+) na base.
+Esquerda (Inflamáveis);L1;1;P1 — Base;Éter de petróleo (estoque);;;Armário antichama. Frascos grandes na base.
+;;;;;;;
+Esquerda (Inflamáveis);L2;2;P2;Clorofórmio;PF Lista II;;Somente em capela. SIPROQUIM 2.
+Esquerda (Inflamáveis);L2;2;P2;Acetato de etila;PF Lista II;;Somente em capela. SIPROQUIM 2.
+Esquerda (Inflamáveis);L2;2;P2;N,N-Dimetilformamida (DMF);;;⚠️ H360D — monitoração biológica (NR-9). Somente em capela.
+;;;;;;;
+Esquerda (Inflamáveis);L3;3;P3;Acetona;PF Lista II;;SIPROQUIM 2. Frascos vedados.
+Esquerda (Inflamáveis);L3;3;P3;Etanol absoluto/P.A;;;Armário antichama.
+Esquerda (Inflamáveis);L3;3;P3;Álcool metílico;;;Armário antichama.
+Esquerda (Inflamáveis);L3;3;P3;Álcool isopropílico;;;Armário antichama.
+Esquerda (Inflamáveis);L3;3;P3;Álcool 70%;;;Armário antichama.
+Esquerda (Inflamáveis);L3;3;P3;Ácido acético glacial;PF Lista IV;;Flash point 39°C — GHS02 primário. Transferido de Fundo. PF Lista IV.
+;;;;;;;
+Esquerda (Inflamáveis);L4;4;P4 — Escada;N-Hexano;;;🪜 Escada. Frascos leves.
+Esquerda (Inflamáveis);L4;4;P4 — Escada;Éter de petróleo (reserva);;;🪜 Escada. Frascos leves.
+Esquerda (Inflamáveis);L4;4;P4 — Escada;Álcool tartárico P.A;;;🪜 Escada. Frascos leves.
+;;;;;;;
+Esquerda (Inflamáveis);L5;5;P5 — Escada;Glicerina/Glicerol;;;🪜 Auxiliar. Baixo risco.
+Esquerda (Inflamáveis);L5;5;P5 — Escada;Vaselina líquida/sólida;;;🪜 Auxiliar. Baixo risco.
+Esquerda (Inflamáveis);L5;5;P5 — Escada;Silicone líquido;;;🪜 Auxiliar.
+Esquerda (Inflamáveis);L5;5;P5 — Escada;Graxa de silicone;;;🪜 Auxiliar.
+Esquerda (Inflamáveis);L5;5;P5 — Escada;Algodão de vidro;;;🪜 Auxiliar.
+;;;;;;;
+Esquerda (Inflamáveis);L6;6;P6 — Topo;Frascos vazios limpos;;;🪜 Topo. Nada perigoso.
+Esquerda (Inflamáveis);L6;6;P6 — Topo;Estoque mínimo de reserva;;;🪜 Topo. Frascos leves apenas.
+;;;;;;;
+Fundo (Ácidos);B1;1;P1 — Base;Ácido nítrico concentrado;Exército (SisFPC);;⚠️ ISOLADO em bandeja exclusiva. NUNCA com orgânicos ou HCl.
+Fundo (Ácidos);B1;1;P1 — Base;Ácido nítrico fumegante;Exército (SisFPC);;⚠️ ISOLADO em bandeja exclusiva. NUNCA com orgânicos ou HCl.
+;;;;;;;
+Fundo (Ácidos);B2;2;P2;Ácido sulfúrico concentrado;PF Lista IV;;Bandeja de contenção dupla. NUNCA no alto.
+Fundo (Ácidos);B2;2;P2;Ácido clorídrico concentrado;PF Lista IV;;Bandeja de contenção dupla. NUNCA no alto.
+Fundo (Ácidos);B2;2;P2;Ác. sulfúrico + molibdato amônio;PF Lista IV;;Bandeja de contenção dupla.
+Fundo (Ácidos);B2;2;P2;Ácido fosfórico (H₃PO₄);PF Lista IV;;Bandeja de contenção dupla.
+;;;;;;;
+Fundo (Ácidos);B3;3;P3;Ácido acético (diluído);PF Lista IV;;Usar em capela. Bandeja de contenção.
+Fundo (Ácidos);B3;3;P3;Ácido fórmico;PF Lista IV;;Usar em capela. Bandeja de contenção.
+Fundo (Ácidos);B3;3;P3;Ácido clorídrico 9,25%;PF Lista IV;;Usar em capela. Bandeja de contenção.
+;;;;;;;
+Fundo (Ácidos);B4;4;P4 — Escada;Ácido bórico;PF Lista IV;;🪜 Pó bem vedado.
+Fundo (Ácidos);B4;4;P4 — Escada;Ácido benzóico;PF Lista IV;;🪜 Pó bem vedado.
+Fundo (Ácidos);B4;4;P4 — Escada;Ácido cítrico;;;🪜 Pó bem vedado.
+Fundo (Ácidos);B4;4;P4 — Escada;Ácido ascórbico;;;🪜 Pó bem vedado.
+Fundo (Ácidos);B4;4;P4 — Escada;Ácido salicílico;;;🪜 Pó bem vedado.
+Fundo (Ácidos);B4;4;P4 — Escada;Ácido oxálico;;;🪜 Pó bem vedado.
+Fundo (Ácidos);B4;4;P4 — Escada;Bissulfato de sódio (NaHSO₄);;;🪜 Ácido forte anidro — longe de carbonatos e sulfitos. Transferido de Direita-P6.
+;;;;;;;
+Fundo (Ácidos);B5;5;P5 — Escada;Ácido sulfanílico;;;🪜 Frascos pequenos.
+Fundo (Ácidos);B5;5;P5 — Escada;Ácido 1-amino-2-naftol-4-sulf.;;;🪜 Frascos pequenos.
+Fundo (Ácidos);B5;5;P5 — Escada;Ácido tartárico;;;🪜 Frascos pequenos.
+;;;;;;;
+Fundo (Ácidos);B6;6;P6 — Topo;Tampão pH 4;;;🪜 Topo. Frascos leves.
+Fundo (Ácidos);B6;6;P6 — Topo;Tampão pH 7;;;🪜 Topo. Frascos leves.
+Fundo (Ácidos);B6;6;P6 — Topo;Tampão pH 10;;;🪜 Topo. Frascos leves.
+Fundo (Ácidos);B6;6;P6 — Topo;Estoque reserva ácidos diluídos;;;🪜 Topo. Frascos leves.
+;;;;;;;
+Direita (Sais/Bases);R1;1;P1 — Base;Hidróxido de sódio;;;Frascos herméticos — higroscópico. NUNCA com ácidos.
+Direita (Sais/Bases);R1;1;P1 — Base;Hidróxido de potássio;;;Frascos herméticos — higroscópico. NUNCA com ácidos.
+Direita (Sais/Bases);R1;1;P1 — Base;Hidróxido de cálcio;;;Frascos herméticos.
+Direita (Sais/Bases);R1;1;P1 — Base;Óxido de cálcio (cal);;;Frascos herméticos.
+Direita (Sais/Bases);R1;1;P1 — Base;Suspensão Al(OH)₃;;;Frascos herméticos.
+;;;;;;;
+Direita (Sais/Bases);R2;2;P2;Sulfato de ferro;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Sulfato de magnésio;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Sulfato de manganês;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Sulfato de alumínio;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Carbonato de sódio;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Carbonato de potássio;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Fosfatos de sódio/potássio;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Cloreto de ferro;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Cloreto de cálcio/magnésio;;;Embalagem 500g–1kg. Seco e vedado.
+Direita (Sais/Bases);R2;2;P2;Cloreto estanhoso (SnCl₂);;;⚠️ Redutor — NUNCA com sais de prata. Transferido de Frente-P2.
+;;;;;;;
+Direita (Sais/Bases);R3;3;P3;Hidróxido de amônio;PF Lista V;;PF Lista V — SIPROQUIM 2. Usar em capela.
+Direita (Sais/Bases);R3;3;P3;Cloreto de sódio;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Acetato de sódio;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Acetato de amônio;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Oxalato de sódio;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Oxalato de amônio;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Brometo de potássio;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Iodeto de sódio (NaI);;;Transferido de R2 — Fe³⁺ oxida I⁻ a I₂ contaminando o NaI analítico.
+Direita (Sais/Bases);R3;3;P3;Amido solúvel;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Caulim;;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Fosfato monopotássio (KH₂PO₄);;;Uso diário.
+Direita (Sais/Bases);R3;3;P3;Fosfato dipotássico (K₂HPO₄);;;Uso diário.
+;;;;;;;
+Direita (Sais/Bases);R4;4;P4 — Escada;Tiossulfato de sódio;;;🪜 Analítico.
+Direita (Sais/Bases);R4;4;P4 — Escada;Sal dissódico EDTA;;;🪜 Analítico.
+Direita (Sais/Bases);R4;4;P4 — Escada;Hidroxilamina;PF Lista VI;;🪜 PF Lista VI. ⚠️ NUNCA com Cu²⁺, Ag⁺ ou Fe³⁺.
+Direita (Sais/Bases);R4;4;P4 — Escada;Hidroxilamina cloridrato;PF Lista VI;;🪜 PF Lista VI. ⚠️ NUNCA com Cu²⁺, Ag⁺ ou Fe³⁺.
+Direita (Sais/Bases);R4;4;P4 — Escada;Cloreto de amônio;PF Lista VI;;🪜 PF Lista VI.
+;;;;;;;
+Direita (Sais/Bases);R5;5;P5 — Escada;Murexida;;;🪜 Indicador. Proteger da luz.
+Direita (Sais/Bases);R5;5;P5 — Escada;Negro de eriocromo T;;;🪜 Indicador. Proteger da luz.
+Direita (Sais/Bases);R5;5;P5 — Escada;Azul de metileno;;;🪜 Corante. Proteger da luz.
+Direita (Sais/Bases);R5;5;P5 — Escada;Verde de bromocresol;;;🪜 Indicador.
+Direita (Sais/Bases);R5;5;P5 — Escada;Vermelho de metila;;;🪜 Indicador.
+Direita (Sais/Bases);R5;5;P5 — Escada;Alaranjado de metila;;;🪜 Indicador.
+Direita (Sais/Bases);R5;5;P5 — Escada;Azul de timol;;;🪜 Indicador.
+Direita (Sais/Bases);R5;5;P5 — Escada;Cristal violeta (CAS 548-62-9);;;🪜 Corante. Proteger da luz.
+Direita (Sais/Bases);R5;5;P5 — Escada;Safranina;;;🪜 Corante. Proteger da luz.
+;;;;;;;
+Direita (Sais/Bases);R6;6;P6 — Topo;Tetraborato de sódio/Bórax;;;🪜 Topo. Frasco leve.
+Direita (Sais/Bases);R6;6;P6 — Topo;Borato de sódio anidro;;;🪜 Topo. Frasco leve.
+Direita (Sais/Bases);R6;6;P6 — Topo;Bicarbonato de potássio;PF Lista V;;🪜 Topo. PF Lista V.
+Direita (Sais/Bases);R6;6;P6 — Topo;Sulfito de sódio;;;🪜 Topo. Frasco leve.
+Direita (Sais/Bases);R6;6;P6 — Topo;Sulfato de sódio;;;🪜 Topo. Frasco leve.
+;;;;;;;
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Cloreto de mercúrio II;PF Lista VI / COFRE;;🔐 COFRE COM CHAVE. Registro de uso obrigatório.
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Sulfato de mercúrio II;COFRE;;🔐 COFRE COM CHAVE.
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Óxido de mercúrio II;COFRE;;🔐 COFRE COM CHAVE.
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Iodeto de mercúrio II;COFRE;;🔐 COFRE COM CHAVE.
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Cianeto de potássio;COFRE;;🔐 COFRE. JAMAIS perto de ácidos.
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Meta-arsenito de sódio;COFRE;;🔐 COFRE COM CHAVE.
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Azida sódica;COFRE;;🔐 COFRE. ⚠️ SEGREGAÇÃO: recipiente isolado de sais de Hg — NaN₃ + Hg²⁺ → azida de mercúrio (explosivo primário).
+Frente (Tóxicos/Oxidantes);F1;1;P1 — Base (COFRE);Nitroprussiato de sódio;COFRE;;🔐 COFRE COM CHAVE.
+;;;;;;;
+Frente (Tóxicos/Oxidantes);F2;2;P2;Nitrato de prata;;;🔒 Acesso restrito. Frasco âmbar (fotossensível).
+Frente (Tóxicos/Oxidantes);F2;2;P2;Sulfato de prata;;;🔒 Acesso restrito. Frasco âmbar.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Nitrato de paládio;;;🔒 Acesso restrito. Frasco âmbar.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Cloreto de cobalto II;;;🔒 Acesso restrito. EPI.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Oxicloreto de zircônio;;;🔒 Acesso restrito. EPI.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Antimônio padrão (AAS);;;🔒 Acesso restrito. EPI.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Sulfato de cobre II;;;🔒 Transferido de R4 — Cu²⁺ catalisa decomposição da hidroxilamina.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Sulfato de níquel;;;🔒 IARC Gr.1 carcinogênico — EPI completo.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Amônio metavanadato;;;🔒 IARC Gr. 2B. EPI.
+Frente (Tóxicos/Oxidantes);F2;2;P2;Fenol/Ácido fênico;;;🔒 Transferido de B5. Absorção dérmica rápida — luvas de nitrila dupla.
+;;;;;;;
+Frente (Tóxicos/Oxidantes);F3;3;P3;Permanganato de potássio;PF Lista VI;;💥 Oxidante ONU 5.1. SIPROQUIM 2. ⚠️ Extremidade oposta ao H₂O₂.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Dicromato de potássio;PF Lista VI;;💥 Oxidante. SIPROQUIM 2.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Cromato de potássio;PF Lista VI;;💥 Oxidante. SIPROQUIM 2.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Bicromato de potássio;PF Lista VI;;💥 Oxidante. SIPROQUIM 2.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Persulfato de amônio;;;💥 Oxidante. ⚠️ Separado do Ca(OCl)₂ — cloraminas.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Persulfato de potássio;;;💥 Oxidante.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Bromato de potássio;;;💥 Oxidante.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Iodato de potássio;;;💥 Oxidante.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Nitrito de sódio;;;💥 Oxidante ONU 5.1. Transferido de R3. Centro da prateleira.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Nitrato de cálcio;;;💥 Oxidante ONU 5.1. Transferido de R3.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Peróxido de hidrogênio;;;💥 Oxidante. ⚠️ Extremidade oposta ao KMnO₄ e cromatos. Separado do Ca(OCl)₂.
+Frente (Tóxicos/Oxidantes);F3;3;P3;Hipoclorito de cálcio;;;💥 Oxidante. ⚠️ Recipiente secundário isolado — NUNCA perto de H₂O₂ ou Persulfato de amônio.
+;;;;;;;
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. H₂SO₄ (várias);;;🗑️ AGUARDA DESCARTE. Rotular.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. HCl;;;🗑️ AGUARDA DESCARTE.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. NaOH;;;🗑️ AGUARDA DESCARTE.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. EDTA;;;🗑️ AGUARDA DESCARTE.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. AgNO₃;;;🗑️ AGUARDA DESCARTE. ⚠️ Extremidade oposta à Sol. Tiossulfato.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. tampão (várias);;;🗑️ AGUARDA DESCARTE.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. iodo/lugol;;;🗑️ AGUARDA DESCARTE.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. permanganato;;;🗑️ AGUARDA DESCARTE.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. tiossulfato;;;🗑️ AGUARDA DESCARTE. ⚠️ Extremidade oposta à Sol. AgNO₃.
+Frente (Tóxicos/Oxidantes);F4;4;P4;Sol. indicadores;;;🗑️ AGUARDA DESCARTE.
+;;;;;;;
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. estoque Zn 1000ppm;;;🗑️🪜 Descarte especial prioritário.
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. estoque Ni 1000ppm;;;🗑️🪜 Descarte especial prioritário (IARC).
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. estoque Mn 1000ppm;;;🗑️🪜 Descarte especial.
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. estoque Fe;;;🗑️🪜 Descarte especial.
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. estoque Cu;;;🗑️🪜 Descarte especial.
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. estoque cloro-mercúrio;;;🗑️🪜 URGENTE — descarte especial Hg. Não lançar na pia.
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. padrão NaCl;;;🗑️🪜 Descarte.
+Frente (Tóxicos/Oxidantes);F5;5;P5 — Escada;Sol. padrão fosfato;;;🗑️🪜 Descarte.
+;;;;;;;
+Frente (Tóxicos/Oxidantes);F6;6;P6 — Topo;O-toluidina;;;🪜🔒 Tóxico. EPI.
+Frente (Tóxicos/Oxidantes);F6;6;P6 — Topo;Dietilditiocarbamato de sódio;;;🪜🔒 Tóxico.
+Frente (Tóxicos/Oxidantes);F6;6;P6 — Topo;Ditizona;;;🪜🔒 H400+H410 — muito tóxica para org. aquáticos. Frasco fechado. Transferida de R5.
+Frente (Tóxicos/Oxidantes);F6;6;P6 — Topo;Indigo Blue padrão;;;🪜🔒 Tóxico.
+Frente (Tóxicos/Oxidantes);F6;6;P6 — Topo;Formiato de sódio;;;🪜 Baixo risco.
+Frente (Tóxicos/Oxidantes);F6;6;P6 — Topo;Reagentes a identificar;;;🪜🔒 NÃO USAR até identificação. Etiquetar 'A IDENTIFICAR'.
