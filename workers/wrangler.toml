@@ -1,0 +1,13 @@
+name = "nadf-ai-assistant"
+main = "ai-assistant.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Configurar em: Cloudflare Dashboard → Workers → nadf-ai-assistant → Settings → Bindings
+# Adicionar binding do tipo "Workers AI" com o nome "AI"
+[ai]
+binding = "AI"
+
+# Opcional: restringir origem permitida (substitua pelo domínio do GitHub Pages)
+# [vars]
+# ALLOWED_ORIGIN = "https://ljoaoml.github.io"

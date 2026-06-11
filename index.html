@@ -6,6 +6,14 @@
 <title>NADF · UNIFENAS — Organização de Reagentes</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<script>
+  // Anti-FOUC: define tema antes do paint
+  (function() {
+    var t = localStorage.getItem('nadf-theme');
+    if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <!-- Loader crítico inline: não depende do CSS externo para aparecer -->
 <style>
   #appLoader {
@@ -100,6 +108,7 @@
       <div id="searchResultWrapper" class="search-results"></div>
     </div>
   </div>
+  <button id="themeToggle" class="theme-toggle" title="Alternar tema"></button>
 </header>
 
 <!-- Botão voltar ao topo -->
@@ -363,6 +372,12 @@
         <button class="mfilter" data-filter="B" onclick="setMaqueteFilter('B',this)" style="--fc:#f0c830;">⚗️ Ácidos</button>
         <button class="mfilter" data-filter="R" onclick="setMaqueteFilter('R',this)" style="--fc:#70b8ff;">🧂 Sais/Bases</button>
         <button class="mfilter" data-filter="F" onclick="setMaqueteFilter('F',this)" style="--fc:#d080ff;">☠️ Tóxicos/Ox.</button>
+      </div>
+      <div class="maquete-search-wrap">
+        <input type="text" id="maqueteSearchInput" class="maquete-search-input"
+               placeholder="🔎 Buscar reagente ou código (ex: KI, B47, fenolftaleína)…"
+               oninput="performMaqueteSearch()" autocomplete="off"
+               aria-label="Buscar reagente na maquete">
       </div>
     </div>
     <div id="maqueteSearchResults"></div>
@@ -794,6 +809,8 @@
         <span class="emerg-reagent-chip">Persulfato de Amônio</span>
         <span class="emerg-reagent-chip">Bromato de Potássio</span>
         <span class="emerg-reagent-chip">Iodato de Potássio</span>
+        <span class="emerg-reagent-chip">Ca(NO₃)₂</span>
+        <span class="emerg-reagent-chip">NaNO₂</span>
       </div>
       </summary>
       <div class="emerg-class-body">
@@ -816,6 +833,7 @@
         <div class="emerg-scenario-content">
           <p>Remover para ar fresco. <span class="rchem">H₂O₂</span> concentrado e hipoclorito liberam vapores oxidantes irritantes.</p>
           <div class="emerg-danger">⚠️ <strong>Persulfato de Amônio:</strong> sensitizador respiratório (H334/H317) — pode induzir asma ocupacional mesmo em exposições de baixa intensidade e repetidas. Qualquer inalação de pó deve ser comunicada ao médico do trabalho; trabalhadores sensibilizados não devem mais manipular o produto.</div>
+          <div class="emerg-warn">⚠️ <strong>NaNO₂ (Nitrito de Sódio):</strong> inalação de pó pode causar metemoglobinemia sistêmica (o nitrito absorvido oxida a hemoglobina, reduzindo a capacidade de transporte de O₂ pelo sangue). Remover para ar fresco; consultar médico se persistirem sintomas como tontura, cianose ou dispneia.</div>
           <p>Consultar médico se tosse persistente ou dificuldade respiratória.</p>
         </div>
       </details>
@@ -825,6 +843,7 @@
           <p>Ligar para CIATOX (0800 722 6001) imediatamente.</p>
           <div class="emerg-danger">⚠️ <span class="rchem">H₂O₂</span>: NÃO induzir vômito — libera <span class="rchem">O₂</span> no estômago, com risco de distensão e perfuração gástrica.</div>
           <div class="emerg-danger">⚠️ <span class="rchem">K₂Cr₂O₇</span>: tóxico sistêmico grave — acionar SAMU urgente.</div>
+          <div class="emerg-danger">🔴 <strong>NaNO₂ (Nitrito de Sódio):</strong> causa metemoglobinemia — o nitrito absorvido converte a hemoglobina em meta-hemoglobina, incapaz de transportar O₂. Acionar SAMU urgente. O antídoto (azul de metileno IV) é hospitalar. <strong>NÃO induzir vômito.</strong> Informar o reagente específico ao atendimento de emergência.</div>
         </div>
       </details>
       <details class="emerg-scenario">
@@ -832,8 +851,10 @@
         <div class="emerg-scenario-content">
           <p><strong>NÃO misturar com matéria orgânica</strong> — oxidantes podem causar ignição espontânea.</p>
           <p><span class="rchem">KMnO₄</span>: neutralizar com solução de ácido ascórbico ou tiossulfato de sódio até descoloração; absorver com areia.</p>
-          <p><strong>AgNO₃:</strong> recolher o sólido ou solução em recipiente identificado — não lavar no esgoto (contaminação por prata). <em>Nota: em concentrações de laboratório, o <span class="rchem">AgNO₃</span> atua principalmente como tóxico e corrosivo (H290, H314, H410), não como oxidante significativo — o perigo dominante no derramamento é a toxicidade e a corrosão, não a ignição.</em></p>
-          <p>Lavar a área com água abundante após contenção.</p>
+          <p><strong>AgNO₃:</strong> recolher o sólido ou solução em recipiente identificado — não lavar no esgoto (contaminação por prata; H410 — tóxico para organismos aquáticos). <em>Nota: em concentrações de laboratório, o <span class="rchem">AgNO₃</span> atua principalmente como corrosivo e tóxico (H290, H314, H410), não como oxidante significativo — o perigo dominante no derramamento é a corrosividade e a toxicidade, não a ignição.</em></p>
+          <p><strong>Ca(NO₃)₂:</strong> oxidante comburente (H272) — <strong>NÃO misturar com matéria orgânica</strong> nem com solventes inflamáveis; pode provocar ignição espontânea do material. Recolher em recipiente identificado "NITRATO DE CÁLCIO — OXIDANTE".</p>
+          <p><strong>NaNO₂:</strong> oxidante moderado e tóxico — <strong>NÃO misturar com ácidos</strong> (libera NO₂, gás tóxico laranja/marrom) nem com matéria orgânica. Recolher em recipiente identificado para empresa especializada. EPI obrigatório: luvas + óculos de proteção.</p>
+          <p>Lavar a área com água abundante após contenção de todos os oxidantes.</p>
         </div>
       </details>
       </div>
@@ -965,6 +986,7 @@
         <span class="emerg-reagent-chip">O-Toluidina</span>
         <span class="emerg-reagent-chip">Meta-Arsenito de Sódio</span>
         <span class="emerg-reagent-chip">Dithizon</span>
+        <span class="emerg-reagent-chip">Na₂S</span>
       </div>
       </summary>
       <div class="emerg-class-body">
@@ -975,6 +997,7 @@
           <div class="emerg-danger">⚠️ <strong>Fenol:</strong> absorção dérmica rapidíssima e silenciosa. Usar polietilenoglicol (PEG 400) se disponível, seguido de água abundante + sabão. Atendimento médico urgente.</div>
           <div class="emerg-warn">⚠️ <strong>O-Toluidina:</strong> causa metemoglobinemia — o sangue perde capacidade de transportar O₂. Médico urgente.</div>
           <div class="emerg-warn">⚠️ <strong>Arsenito de Sódio:</strong> tóxico acumulativo — médico mesmo sem sintomas imediatos.</div>
+          <div class="emerg-danger">🔴 <strong>Na₂S (Sulfeto de Sódio):</strong> fortemente alcalino e corrosivo (H290, H314) — lavar com água corrente por 20 minutos; atendimento médico obrigatório se houver queimadura ou irritação persistente.</div>
         </div>
       </details>
       <details class="emerg-scenario">
@@ -990,6 +1013,7 @@
           <div class="emerg-danger">⚠️ <strong>Benzeno:</strong> carcinogênico reconhecido — encaminhar ao médico sempre, mesmo exposição breve.</div>
           <div class="emerg-warn">⚠️ <strong>Clorofórmio:</strong> narcótico — inconsciência possível em exposição elevada. Manter vítima acordada e monitorada.</div>
           <div class="emerg-danger">⚠️ <strong>Fenol:</strong> vapores corrosivos para vias aéreas — médico urgente.</div>
+          <div class="emerg-danger">🔴 <strong>Na₂S — ATENÇÃO:</strong> em contato com ácidos (inclusive CO₂ atmosférico dissolvido em solução aquosa) libera <strong>sulfeto de hidrogênio (H₂S)</strong> — gás incolor e letal a partir de 100 ppm. O H₂S causa paralisia olfativa em altas concentrações, eliminando o aviso sensorial. Em caso de suspeita de liberação de H₂S: evacuação imediata da área; acionar SAMU. <strong>Não reentrar sem proteção respiratória autônoma (SCBA)</strong>.</div>
         </div>
       </details>
       <details class="emerg-scenario">
@@ -997,7 +1021,8 @@
         <div class="emerg-scenario-content">
           <p>Acionar SAMU urgente para todos os reagentes desta classe. <strong>NÃO induzir vômito</strong> para benzeno e clorofórmio.</p>
           <p>Arsenito de Sódio: pronto-socorro urgente — informar o reagente específico.</p>
-          <p>Mencionar o reagente específico ao CIATOX (0800 722 6001) para orientação de antídotos.</p>
+          <div class="emerg-danger">🔴 <strong>Na₂S:</strong> extremamente tóxico por ingestão (H301, H311, H331) — acionar SAMU urgente. Informar "sulfeto de sódio" ao CIATOX (0800 722 6001) e ao atendimento de emergência para orientação de antídotos.</div>
+          <p>Mencionar sempre o reagente específico ao CIATOX (0800 722 6001) para orientação sobre antídotos.</p>
         </div>
       </details>
       <details class="emerg-scenario">
@@ -1006,6 +1031,7 @@
           <p><strong>Fenol:</strong> absorver com areia seca ou vermiculita (NÃO usar serragem). Recolher com espátula em recipiente hermético identificado para descarte por empresa especializada. <strong>NÃO neutralizar com bicarbonato de sódio</strong> — a efervescência do <span class="rchem">CO₂</span> gerado dispersa gotículas de fenol no ar; além disso, o fenolato de sódio formado (<span class="rchem">C₆H₅ONa</span>) é igualmente tóxico, solúvel em água e de difícil confinamento. EPI completo obrigatório — luvas neoprene, protetor facial, avental de PVC.</p>
           <p><strong>Benzeno / Clorofórmio:</strong> eliminar fontes de ignição; ventilação máxima; absorver com areia; empresa especializada obrigatória.</p>
           <p><strong>Arsenito de Sódio:</strong> EPI completo; recolher sem dispersar pó; empresa especializada obrigatória — nunca lavar no esgoto.</p>
+          <div class="emerg-danger">🔴 <strong>Na₂S — ATENÇÃO:</strong> <strong>NÃO adicionar ácidos de neutralização ao derramamento</strong> — reação ácido-sulfeto libera H₂S (gás letal). Absorver com areia <em>seca</em>; recolher com espátula em recipiente hermético identificado "SULFETO — TÓXICO — NUNCA MISTURAR COM ÁCIDOS". EPI obrigatório: luvas de neoprene + óculos + máscara com filtro ABEK (proteção contra H₂S). Empresa especializada obrigatória.</div>
         </div>
       </details>
       </div>
@@ -1037,6 +1063,7 @@
         <div class="emerg-scenario-content">
           <p>Lavar com água corrente por 15 minutos. Remover roupas contaminadas.</p>
           <div class="emerg-warn">⚠️ Ácido acético glacial em contato prolongado pode causar queimaduras — lavar imediatamente e com generosidade.</div>
+          <div class="emerg-danger">⚠️ <strong>Ácido fosfórico concentrado (≥ 85%):</strong> classificado como corrosivo (H314, GHS Classe 8) pela ABNT NBR 14725 — tratar como ácido forte: lavar com água corrente por 20 minutos; atendimento médico obrigatório. Diluído (&lt; 5%): lavagem de 15 min suficiente na ausência de sintomas.</div>
           <p>Ácido fórmico em área grande: médico — é tóxico sistêmico em exposições significativas.</p>
         </div>
       </details>
@@ -1044,6 +1071,7 @@
         <summary>👁️ Contato com os olhos</summary>
         <div class="emerg-scenario-content">
           <p>Lavar com água por 15 minutos. Consultar médico se houver irritação persistente.</p>
+          <div class="emerg-danger">⚠️ <strong>Ácido fosfórico concentrado:</strong> corrosivo ocular (H314) — lavar com água corrente por 20 minutos contínuos; encaminhar ao oftalmologista obrigatoriamente (ABNT NBR 14725).</div>
         </div>
       </details>
       <details class="emerg-scenario">
@@ -1111,7 +1139,7 @@
       <details class="emerg-scenario">
         <summary>🧯 Derramamento / Spill</summary>
         <div class="emerg-scenario-content">
-          <p>Neutralizar com ácido cítrico diluído ou vinagre. Limpar com água. Risco ambiental baixo em pequenas quantidades.</p>
+          <p>Neutralizar com solução de ácido cítrico diluído ou <strong>solução de ácido acético a 5% (p/v)</strong> — não utilizar vinagre (composição variável; inadequado como reagente de segurança conforme NR-26). Absorver o resíduo com papel absorvente ou areia seca. Verificar pH antes de lavar com água. Risco ambiental baixo em pequenas quantidades após neutralização confirmada.</p>
         </div>
       </details>
       </div>
@@ -1123,7 +1151,7 @@
         <div class="emerg-header-row">
         <span class="emerg-class-header-emoji">🧂</span>
         <span class="emerg-class-header-title">Sais com Atenção</span>
-        <span class="emerg-risk-badge emerg-risk-baixo">BAIXO</span>
+        <span class="emerg-risk-badge emerg-risk-moderado">MÉDIO</span>
         </div>
 <div class="emerg-reagent-list">
         <span class="emerg-reagent-chip">NH₄Cl</span>
@@ -1132,39 +1160,51 @@
         <span class="emerg-reagent-chip">Sulfato de Ferro</span>
         <span class="emerg-reagent-chip">Sulfato de Manganês</span>
         <span class="emerg-reagent-chip">Nitrato de Prata</span>
+        <span class="emerg-reagent-chip">NH₄VO₃</span>
+        <span class="emerg-reagent-chip">CoCl₂</span>
+        <span class="emerg-reagent-chip">NiSO₄</span>
       </div>
       </summary>
       <div class="emerg-class-body">
             <details class="emerg-scenario">
         <summary>🩹 Contato com a pele</summary>
         <div class="emerg-scenario-content">
-          <p>Lavar com água. Oxalato de sódio é irritante. Sulfatos de metais pesados (Cu, Mn, Fe): lavar bem por 10–15 min.</p>
+          <p>Lavar com água corrente. Oxalato de sódio é irritante. Sulfatos de metais pesados (Cu, Mn, Fe): lavar por 10–15 min.</p>
+          <div class="emerg-warn">⚠️ <strong>AgNO₃:</strong> lavar por 15 min — pode causar mancha cinza/preta permanente na pele (redução a Ag⁰; inofensiva em pequena quantidade, mas sinal de exposição). Em contato extenso ou com olhos: médico obrigatório (H314).</div>
+          <div class="emerg-warn">⚠️ <strong>CoCl₂ e NiSO₄:</strong> sensibilizantes dérmicos (H317) — exposições repetidas podem desencadear dermatite de contato alérgica. Lavar por 15 min; consultar médico do trabalho se houver reação cutânea.</div>
         </div>
       </details>
       <details class="emerg-scenario">
         <summary>👁️ Contato com os olhos</summary>
         <div class="emerg-scenario-content">
           <p>Lavar com água por 10–15 minutos. Consultar médico se irritação persistir.</p>
+          <div class="emerg-danger">🔴 <strong>AgNO₃:</strong> corrosivo ocular (H314) — lavar com água corrente por 20 minutos contínuos; atendimento médico obrigatório. Conforme ABNT NBR 14725, substâncias corrosivas oculares exigem lavagem mínima de 20 min e avaliação oftalmológica.</div>
         </div>
       </details>
       <details class="emerg-scenario">
         <summary>💨 Inalação de vapores/poeiras</summary>
         <div class="emerg-scenario-content">
-          <p>Cloreto de amônio gera vapores irritantes quando aquecido. Oxalato e outros sais em pó: irritantes das vias aéreas. Remover para ar fresco.</p>
+          <p>Cloreto de amônio gera vapores irritantes quando aquecido. Oxalato e outros sais em pó: irritantes das vias aéreas superiores. Remover para ar fresco.</p>
+          <div class="emerg-danger">⚠️ <strong>NH₄VO₃ (pó amarelo fino):</strong> tóxico por inalação (H331) e suspeito de dano a órgãos por exposição repetida (H373, CAS 7803-55-6). Manipular exclusivamente em capela de exaustão. Qualquer inalação de pó: consultar médico — sintomas de intoxicação por vanádio podem ser tardios.</div>
+          <div class="emerg-warn">⚠️ <strong>CoCl₂ (pó azul):</strong> sensitizador respiratório (H334) e carcinogênico suspeito (IARC Grupo 2B). Inalação de pó durante pesagem: médico do trabalho obrigatório. Usar EPI completo e ventilação forçada em toda manipulação.</div>
+          <div class="emerg-warn">⚠️ <strong>NiSO₄:</strong> carcinogênico IARC Grupo 1 (câncer nasal e pulmonar confirmado em humanos). Inalação de pó ou névoa: médico obrigatório. Manipular com respirador P2 e ventilação forçada.</div>
         </div>
       </details>
       <details class="emerg-scenario">
         <summary>🚫 Ingestão</summary>
         <div class="emerg-scenario-content">
-          <p>Cloreto de amônio: irritante — dar água; observar.</p>
-          <div class="emerg-warn">⚠️ <strong>Oxalato de Sódio:</strong> tóxico — forma cristais de oxalato de cálcio nos rins. Ligar para CIATOX.</div>
-          <div class="emerg-warn">⚠️ <strong>Sulfatos de metais pesados:</strong> ligar para CIATOX. Sulfato de mercúrio: pronto-socorro urgente.</div>
+          <p>Cloreto de amônio: irritante — oferecer água; observar sintomas.</p>
+          <div class="emerg-warn">⚠️ <strong>Oxalato de Sódio:</strong> tóxico — forma cristais de oxalato de cálcio nos rins. Ligar para CIATOX (0800 722 6001) imediatamente.</div>
+          <div class="emerg-warn">⚠️ <strong>Sulfatos de metais pesados:</strong> ligar para CIATOX. Sulfato de mercúrio: acionar SAMU urgente.</div>
+          <div class="emerg-danger">⚠️ <strong>AgNO₃:</strong> corrosivo (H314) — ligar para CIATOX urgente; <strong>NÃO induzir vômito</strong> (agravaria as lesões corrosivas no trato digestivo). Acionar SAMU se quantidade relevante.</div>
+          <div class="emerg-danger">⚠️ <strong>NH₄VO₃:</strong> tóxico por ingestão (H301) — compostos de vanádio acumulam-se nos órgãos. Ligar para CIATOX urgente e acionar SAMU.</div>
         </div>
       </details>
       <details class="emerg-scenario">
         <summary>🧯 Derramamento / Spill</summary>
         <div class="emerg-scenario-content">
-          <p>Lavar com água. Sais de metais pesados (Cu, Mn, Fe, Ag, Hg): recolher para descarte especializado — nunca lavar no esgoto.</p>
+          <p>Recolher com EPI (luvas nitrila + óculos). Sais de metais pesados (Cu, Mn, Fe, Ag, Hg): jamais lavar no esgoto — recolher para descarte especializado.</p>
+          <div class="emerg-warn">⚠️ <strong>NH₄VO₃, CoCl₂, NiSO₄:</strong> metais pesados tóxicos/carcinogênicos — recolher com espátula em recipiente identificado; nunca lavar no esgoto. Destino: empresa especializada (Classe I — ABNT NBR 10004).</div>
         </div>
       </details>
       </div>
@@ -1222,6 +1262,7 @@
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Armazenar em bombona fechada, em local ventilado, longe de fontes de ignição — nunca em vidros ou recipientes frágeis.</span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Metanol pode ser combinado com outros álcoois não halogenados compatíveis (etanol, isopropanol) para incineração conjunta — nunca misturar com clorofórmio ou outros halogenados.</span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Benzeno: resíduo de altíssima periculosidade (carcinogênico IARC Grupo 1) — <strong>NÃO misturar com nenhum outro solvente, halogenado ou não</strong>. Segregar em bombona própria identificada "BENZENO — CARCINOGÊNICO" e encaminhar para empresa especializada.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><strong>Éter de petróleo:</strong> mistura de hidrocarbonetos leves (n-pentano, hexano e isômeros; ponto de ebulição 30–60 °C) — extremamente volátil e inflamável. Para fins de segregação, classificar como solvente não halogenado; contudo, <strong>NÃO misturar na mesma bombona com álcoois, acetonas ou éter dietílico</strong> — a diferença de volatilidade e densidade inviabiliza o tratamento conjunto. Segregar em bombona própria identificada "ÉTER DE PETRÓLEO — INFLAMÁVEL EXTREMO — BOMBONA PRESSURIZADA". Em ambientes com temperatura ambiente &gt; 25 °C, utilizar bombona com válvula de alívio de pressão. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>NÃO misturar com soluções aquosas, ácidos ou bases — risco de reação e inviabilização do tratamento.</span></div>
       </div>
     </details>
@@ -1257,6 +1298,8 @@
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Dicromatos e Cromatos (<span class="rchem">K₂Cr₂O₇</span>, Cromato de Potássio, Bicromato): empresa especializada OBRIGATÓRIA — cromo hexavalente é carcinogênico; nunca descartar no esgoto. <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">AgNO₃</span>: recuperar prata por precipitação com <span class="rchem">NaCl</span> quando possível (valor econômico); resíduo restante: empresa especializada. <span class="descarte-tag tag-especial">RECUPERAÇÃO / EMPRESA</span></span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Hipoclorito de Cálcio: neutralizar com tiossulfato de sódio; descartar solução neutra no esgoto. <span class="descarte-tag tag-esgoto">ESGOTO (neutralizado)</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">Ca(NO₃)₂</span> (Nitrato de Cálcio): oxidante comburente (H272) — segregar de matéria orgânica e solventes inflamáveis em todo o processo de armazenamento e descarte. Empresa especializada recomendada; <strong>nunca misturar com resíduos orgânicos</strong>. Identificar como "NITRATO DE CÁLCIO — OXIDANTE". <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">NaNO₂</span> (Nitrito de Sódio): tóxico (H301) e oxidante moderado — empresa especializada obrigatória. <strong>NÃO misturar com ácidos</strong> (libera NO₂, gás tóxico de coloração laranja) <strong>nem com matéria orgânica</strong>. Identificar como "NITRITO DE SÓDIO — TÓXICO / OXIDANTE". <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
       </div>
     </details>
 
@@ -1293,6 +1336,7 @@
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Fenol: empresa especializada; pequenas quantidades podem ser diluídas em solvente não halogenado compatível para incineração conjunta.</span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Arsenito de Sódio: resíduo inorgânico tóxico — empresa especializada; nunca lavar no esgoto.</span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>O-Toluidina: empresa especializada — segregar de solventes não halogenados.</span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">Na₂S</span> (Sulfeto de Sódio): empresa especializada obrigatória — extremamente tóxico (H301, H311, H331) e reage com ácidos liberando <span class="rchem">H₂S</span> (gás letal). <strong>Nunca adicionar ácidos de neutralização ao resíduo antes da coleta.</strong> Armazenar em recipiente hermético separado de todos os ácidos e oxidantes. Identificar como "SULFETO DE SÓDIO — EXTREMAMENTE TÓXICO — NUNCA MISTURAR COM ÁCIDOS". <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
       </div>
     </details>
 
@@ -1325,6 +1369,9 @@
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Oxalato de Sódio: empresa especializada (tóxico — forma cristais de oxalato de cálcio nos rins). <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Tiossulfato, cloreto de amônio em solução diluída com pH neutro: esgoto. <span class="descarte-tag tag-esgoto">ESGOTO (diluído)</span></span></div>
       <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span>Nitrato de Prata: recuperar prata por precipitação com NaCl (valor econômico); resíduo: empresa especializada. <span class="descarte-tag tag-especial">RECUPERAÇÃO / EMPRESA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">NH₄VO₃</span> (Amônio Metavanadato): resíduo de metal pesado (vanádio — H301, H331, H373) — empresa especializada obrigatória; Classe I (ABNT NBR 10004). Nunca descartar no esgoto. Identificar como "VANÁDIO — TÓXICO — CLASSE I". <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">NiSO₄</span> e soluções de níquel: empresa especializada obrigatória — carcinogênico IARC Grupo 1 (H350, H372). Nunca descartar no esgoto ou em lixo comum. Identificar como "NÍQUEL — CARCINOGÊNICO — CLASSE I". <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
+      <div class="descarte-method"><span class="descarte-method-bullet">▸</span><span><span class="rchem">CoCl₂</span> (Cloreto de Cobalto II): empresa especializada — metal pesado carcinogênico suspeito (IARC Grupo 2B, H350, H334). Nunca descartar no esgoto. Identificar como "COBALTO — CARCINOGÊNICO SUSPEITO — CLASSE I". <span class="descarte-tag tag-empresa">EMPRESA ESPECIALIZADA</span></span></div>
       </div>
     </details>
 
@@ -1333,7 +1380,67 @@
 </main>
 
 <script src="assets/js/data.js"></script>
+<script>window.AI_WORKER_URL = 'https://workers-ai-assistant.ljoaomarcosalves.workers.dev';</script>
 <script src="assets/js/app.js"></script>
+
+<!-- IA Assistente Químico NADF ──────────────────────────────────── -->
+<button class="ai-fab" id="aiFab" onclick="toggleAIChat()" title="KTION · Assistente de Segurança Química" aria-label="Abrir KTION, assistente de segurança química">
+  <span class="ai-fab-icon">🤖</span>
+  <span class="ai-fab-label">KTION</span>
+</button>
+
+<div class="ai-panel" id="aiPanel" style="display:none" role="dialog" aria-label="Assistente de segurança química">
+  <div class="ai-panel-header">
+    <div class="ai-panel-title">
+      <span class="ai-panel-icon">🤖</span>
+      <div>
+        <div class="ai-panel-name">KTION</div>
+        <div class="ai-panel-sub">Assistente de Segurança Química · NADF</div>
+      </div>
+    </div>
+    <button class="ai-panel-close" onclick="toggleAIChat()" aria-label="Fechar assistente">✕</button>
+  </div>
+
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-msg ai-msg-bot">
+      <div class="ai-msg-bubble">
+        Olá! Sou o <strong>KTION</strong>, assistente de segurança química do NADF. Posso ajudar com:
+        <ul class="ai-help-list">
+          <li>📍 Localização de reagentes no almoxarifado</li>
+          <li>⚠️ Perigos GHS e informações de segurança</li>
+          <li>🔬 Propriedades físico-químicas via PubChem</li>
+          <li>♻️ Procedimentos corretos de descarte</li>
+          <li>🚨 Primeiros socorros em emergências</li>
+          <li>📋 Normas brasileiras (ABNT, NR-26, CONAMA)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-suggestions" id="aiSuggestions">
+    <button class="ai-sug" onclick="sendAIQuestion('Onde fica o cloreto de mercúrio?')">Onde fica HgCl₂?</button>
+    <button class="ai-sug" onclick="sendAIQuestion('Como descartar acetona corretamente?')">Descarte acetona</button>
+    <button class="ai-sug" onclick="sendAIQuestion('Quais normas para armazenar inflamáveis?')">Normas inflamáveis</button>
+    <button class="ai-sug" onclick="sendAIQuestion('Propriedades e perigos do ácido sulfúrico')">Info H₂SO₄</button>
+  </div>
+
+  <div class="ai-input-row">
+    <input type="text" id="aiInput" class="ai-input"
+           placeholder="Pergunte sobre um reagente ou norma…"
+           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAIMessage();}"
+           autocomplete="off" aria-label="Pergunta ao assistente">
+    <button class="ai-send" id="aiSendBtn" onclick="sendAIMessage()" aria-label="Enviar pergunta">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+
+  <div class="ai-panel-footer">
+    <span>KTION · PubChem NIH · Acervo NADF/UNIFENAS</span>
+    <span id="aiWorkerStatus"></span>
+  </div>
+</div>
+<!-- ─────────────────────────────────────────────────────────────── -->
+
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
@@ -1378,7 +1485,7 @@
 
   <div class="footer-bottom">
     <div class="footer-bottom-left">© 2026 NADF — Núcleo Analítico de Desenvolvimento Farmacêutico · UNIFENAS</div>
-    <div class="footer-bottom-right">Alfa v3.0.5 · Última atualização: Jun 2026</div>
+    <div class="footer-bottom-right">Alfa v4.0.0 · Última atualização: Jun 2026</div>
   </div>
 </footer>
 
