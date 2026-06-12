@@ -1,0 +1,136 @@
+
+  /* ============================================================
+     NADF — Light Mode Theme
+     All html[data-theme="light"] and @media (prefers-color-scheme: light) overrides.
+     Loaded separately from style.css for maintainability.
+     ============================================================ */
+
+  /* System prefers light and user hasn't forced dark */
+  @media (prefers-color-scheme: light) {
+    html:not([data-theme="dark"]) {
+      --bg: #f0f3fa; --surface: #ffffff; --surface2: #e6eaf5;
+      --border: #ccd3e8; --text: #1c2238; --muted: #566080;
+      --accent: #007d56; --accent2: #1a6fd4; --warn: #a06000; --danger: #c02828;
+    }
+    html:not([data-theme="dark"]) body { color-scheme: light; }
+    html:not([data-theme="dark"]) header { background: rgba(255,255,255,0.94); }
+    html:not([data-theme="dark"]) .tabs-wrap { background: var(--surface); }
+    html:not([data-theme="dark"]) .tabs-wrap.has-overflow::after {
+      background: linear-gradient(to right, transparent, var(--surface) 80%);
+    }
+    html:not([data-theme="dark"]) .card,
+    html:not([data-theme="dark"]) .emerg-class-card,
+    html:not([data-theme="dark"]) .descarte-card,
+    html:not([data-theme="dark"]) .kit-card,
+    html:not([data-theme="dark"]) .cas-card,
+    html:not([data-theme="dark"]) .qref-panel,
+    html:not([data-theme="dark"]) .qsearch-dropdown,
+    html:not([data-theme="dark"]) .class-card { background: var(--surface); border-color: var(--border); }
+    html:not([data-theme="dark"]) .emerg-scenario-content { color: var(--muted); }
+    html:not([data-theme="dark"]) .emerg-warn  { background: rgba(160,96,0,0.08); border-color: rgba(160,96,0,0.25); }
+    html:not([data-theme="dark"]) .emerg-danger{ background: rgba(192,40,40,0.08); border-color: rgba(192,40,40,0.25); }
+    html:not([data-theme="dark"]) .rchem { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.16); color: var(--text); }
+    html:not([data-theme="dark"]) #classDrawer { background: var(--surface); }
+    html:not([data-theme="dark"]) #classDrawerOverlay { background: rgba(0,0,0,0.4); }
+    html:not([data-theme="dark"]) .page-hero { background: transparent; }
+    html:not([data-theme="dark"]) .page-hero h2 { color: var(--text); }
+    html:not([data-theme="dark"]) .search-item,
+    html:not([data-theme="dark"]) .mresult-item { background: var(--surface2); border-color: var(--border); }
+    html:not([data-theme="dark"]) .search-item:hover,
+    html:not([data-theme="dark"]) .mresult-item:hover { background: var(--border); }
+    html:not([data-theme="dark"]) .emerg-reagent-chip,
+    html:not([data-theme="dark"]) .reagent-chip { background: var(--surface2); border-color: var(--border); color: var(--muted); }
+    html:not([data-theme="dark"]) .descarte-tag { opacity: 0.85; }
+
+    /* Maquete + shelves */
+    html:not([data-theme="dark"]) .maquete-plan-area { color: var(--muted); }
+    html:not([data-theme="dark"]) #shelfStack,
+    html:not([data-theme="dark"]) #shelfPanel { background: var(--surface); border-color: var(--border); }
+    html:not([data-theme="dark"]) .shelf-row:hover { background: var(--surface2); }
+    html:not([data-theme="dark"]) .wallbtn { background: var(--surface2); border-color: var(--border); color: var(--text); }
+    html:not([data-theme="dark"]) .wallbtn:hover { background: var(--border); }
+    html:not([data-theme="dark"]) .mresult-item:hover { background: var(--surface2); }
+
+    /* Risk gauge */
+    html:not([data-theme="dark"]) .risk-gauge-track { background: rgba(0,0,0,0.08); }
+
+    /* Sheets panel */
+    html:not([data-theme="dark"]) .sheets-sync-card { background: var(--surface2); border-color: var(--border); }
+    html:not([data-theme="dark"]) .sheets-url-input { background: var(--surface); border-color: var(--border); color: var(--text); }
+
+    /* AI widget */
+    html:not([data-theme="dark"]) .ai-panel { background: var(--surface); border-color: var(--border); }
+    html:not([data-theme="dark"]) .ai-panel-header { background: var(--surface2); }
+    html:not([data-theme="dark"]) .ai-msg-bot .ai-msg-bubble { background: var(--surface2); border-color: var(--border); }
+    html:not([data-theme="dark"]) .ai-typing { background: var(--surface2); border-color: var(--border); }
+    html:not([data-theme="dark"]) .ai-sug { background: var(--surface2); border-color: var(--border); }
+    html:not([data-theme="dark"]) .ai-input { background: var(--surface); border-color: var(--border); }
+  }
+
+  /* User explicitly forced light theme */
+  html[data-theme="light"] {
+    --bg: #f0f3fa; --surface: #ffffff; --surface2: #e6eaf5;
+    --border: #ccd3e8; --text: #1c2238; --muted: #566080;
+    --accent: #007d56; --accent2: #1a6fd4; --warn: #a06000; --danger: #c02828;
+  }
+  html[data-theme="light"] body { color-scheme: light; }
+  html[data-theme="light"] header { background: rgba(255,255,255,0.94); }
+  html[data-theme="light"] .tabs-wrap { background: var(--surface); }
+  html[data-theme="light"] .tabs-wrap.has-overflow::after {
+    background: linear-gradient(to right, transparent, var(--surface) 80%);
+  }
+  html[data-theme="light"] .card,
+  html[data-theme="light"] .emerg-class-card,
+  html[data-theme="light"] .descarte-card,
+  html[data-theme="light"] .kit-card,
+  html[data-theme="light"] .cas-card,
+  html[data-theme="light"] .qref-panel,
+  html[data-theme="light"] .qsearch-dropdown,
+  html[data-theme="light"] .class-card { background: var(--surface); border-color: var(--border); }
+  html[data-theme="light"] .emerg-scenario-content { color: var(--muted); }
+  html[data-theme="light"] .emerg-warn  { background: rgba(160,96,0,0.08); border-color: rgba(160,96,0,0.25); }
+  html[data-theme="light"] .emerg-danger{ background: rgba(192,40,40,0.08); border-color: rgba(192,40,40,0.25); }
+  html[data-theme="light"] .rchem { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.16); color: var(--text); }
+  html[data-theme="light"] #classDrawer { background: var(--surface); }
+  html[data-theme="light"] #classDrawerOverlay { background: rgba(0,0,0,0.4); }
+  html[data-theme="light"] .page-hero { background: transparent; }
+  html[data-theme="light"] .page-hero h2 { color: var(--text); }
+  html[data-theme="light"] .search-item,
+  html[data-theme="light"] .mresult-item { background: var(--surface2); border-color: var(--border); }
+  html[data-theme="light"] .search-item:hover,
+  html[data-theme="light"] .mresult-item:hover { background: var(--border); }
+  html[data-theme="light"] .emerg-reagent-chip,
+  html[data-theme="light"] .reagent-chip { background: var(--surface2); border-color: var(--border); color: var(--muted); }
+  html[data-theme="light"] .descarte-tag { opacity: 0.85; }
+
+  /* Maquete + shelves */
+  html[data-theme="light"] .maquete-plan-area { color: var(--muted); }
+  html[data-theme="light"] #shelfStack,
+  html[data-theme="light"] #shelfPanel { background: var(--surface); border-color: var(--border); }
+  html[data-theme="light"] .shelf-row:hover { background: var(--surface2); }
+  html[data-theme="light"] .wallbtn { background: var(--surface2); border-color: var(--border); color: var(--text); }
+  html[data-theme="light"] .wallbtn:hover { background: var(--border); }
+  html[data-theme="light"] .mresult-item:hover { background: var(--surface2); }
+
+  /* Risk gauge */
+  html[data-theme="light"] .risk-gauge-track { background: rgba(0,0,0,0.08); }
+
+  /* Sheets panel */
+  html[data-theme="light"] .sheets-sync-card { background: var(--surface2); border-color: var(--border); }
+  html[data-theme="light"] .sheets-url-input { background: var(--surface); border-color: var(--border); color: var(--text); }
+
+  /* AI widget */
+  html[data-theme="light"] .ai-panel { background: var(--surface); border-color: var(--border); }
+  html[data-theme="light"] .ai-panel-header { background: var(--surface2); }
+  html[data-theme="light"] .ai-msg-bot .ai-msg-bubble { background: var(--surface2); border-color: var(--border); }
+  html[data-theme="light"] .ai-typing { background: var(--surface2); border-color: var(--border); }
+  html[data-theme="light"] .ai-sug { background: var(--surface2); border-color: var(--border); }
+  html[data-theme="light"] .ai-input { background: var(--surface); border-color: var(--border); }
+
+  /* User explicitly forced dark (overrides system light preference) */
+  html[data-theme="dark"] {
+    --bg: #0d0f14; --surface: #161a22; --surface2: #1e2430;
+    --border: #2a3040; --text: #e8ecf4; --muted: #7a8499;
+    --accent: #00c896; --accent2: #4a9eff; --warn: #ffb84a; --danger: #ff5757;
+  }
+  html[data-theme="dark"] body { color-scheme: dark; }
