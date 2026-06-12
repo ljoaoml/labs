@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NADF · UNIFENAS — Organização de Reagentes</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/theme-light.css">
 <script>
@@ -105,8 +105,8 @@
   <div class="header-search">
     <div class="header-search-inner">
       <span class="header-search-icon">🔍</span>
-      <input type="text" id="reagentSearchInput" placeholder="Localizar reagente no almoxarifado…" oninput="performReagentSearch()">
-      <div id="searchResultWrapper" class="search-results"></div>
+      <input type="text" id="reagentSearchInput" placeholder="Localizar reagente no almoxarifado…" oninput="performReagentSearch()" aria-label="Localizar reagente">
+      <div id="searchResultWrapper" class="search-results" role="listbox" aria-live="polite"></div>
     </div>
   </div>
   <button id="themeToggle" class="theme-toggle" title="Alternar tema"></button>
@@ -117,17 +117,16 @@
 
 <div class="tabs-wrap" id="tabsWrap">
   <div class="tabs" id="tabsBar">
-    <button class="tab active" onclick="showTab('classes',this)">Classes de Risco</button>
-    <button class="tab" onclick="showTab('incompatibilidade',this)">Incompatibilidades</button>
-    <button class="tab" onclick="showTab('almoxarifado',this)">🏛️ Almoxarifado</button>
-    <button class="tab" onclick="showTab('cas',this)">CAS</button>
-    <button class="tab" onclick="showTab('regras',this)">Regras de Armazenamento</button>
-    <button class="tab" onclick="showTab('normas',this)">Normas Brasileiras</button>
-    <button class="tab" onclick="showTab('emergencias',this)">🚨 Emergências</button>
-    <button class="tab" onclick="showTab('descarte',this)">♻️ Descarte</button>
+    <button class="tab active" data-tab="classes" onclick="showTab('classes',this)">Classes de Risco</button>
+    <button class="tab" data-tab="incompatibilidade" onclick="showTab('incompatibilidade',this)">Incompatibilidades</button>
+    <button class="tab" data-tab="almoxarifado" onclick="showTab('almoxarifado',this)">🏛️ Almoxarifado</button>
+    <button class="tab" data-tab="cas" onclick="showTab('cas',this)">CAS</button>
+    <button class="tab" data-tab="regras" onclick="showTab('regras',this)">Regras de Armazenamento</button>
+    <button class="tab" data-tab="normas" onclick="showTab('normas',this)">Normas Brasileiras</button>
+    <button class="tab" data-tab="emergencias" onclick="showTab('emergencias',this)">🚨 Emergências</button>
+    <button class="tab" data-tab="descarte" onclick="showTab('descarte',this)">♻️ Descarte</button>
   </div>
 </div>
-
 
 <main>
 
@@ -249,23 +248,23 @@
         <thead>
           <tr>
             <th></th>
-            <th>🔥 Inflamável</th>
-            <th>⚗️ Corrosivo</th>
-            <th>💥 Oxidante</th>
-            <th>☠️ Tóxico</th>
-            <th>🧫 Ácido</th>
-            <th>🔵 Base</th>
-            <th>🧂 Inerte</th>
+            <th style="--mc:#ff6b2b">🔥 Inflamável</th>
+            <th style="--mc:#e8b800">⚗️ Corrosivo</th>
+            <th style="--mc:#ff9100">💥 Oxidante</th>
+            <th style="--mc:#c060ff">☠️ Tóxico</th>
+            <th style="--mc:#ff4a7a">🧫 Ácido</th>
+            <th style="--mc:#4a9eff">🔵 Base</th>
+            <th style="--mc:#7a8499">🧂 Inerte</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td class="row-label">🔥 Inflamável</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="warn">⚠️</td><td class="ok">✓</td></tr>
-          <tr><td class="row-label">⚗️ Corrosivo</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td></tr>
-          <tr><td class="row-label">💥 Oxidante</td><td class="no">❌</td><td class="no">❌</td><td class="ok">✓</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="ok">✓</td></tr>
-          <tr><td class="row-label">☠️ Tóxico</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="ok">✓</td></tr>
-          <tr><td class="row-label">🧫 Ácido</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="no">❌</td><td class="ok">✓</td></tr>
-          <tr><td class="row-label">🔵 Base</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="ok">✓</td><td class="ok">✓</td></tr>
-          <tr><td class="row-label">🧂 Inerte</td><td class="ok">✓</td><td class="warn">⚠️</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+          <tr><td class="row-label" style="--mc:#ff6b2b">🔥 Inflamável</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="warn">⚠️</td><td class="ok">✓</td></tr>
+          <tr><td class="row-label" style="--mc:#e8b800">⚗️ Corrosivo</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td></tr>
+          <tr><td class="row-label" style="--mc:#ff9100">💥 Oxidante</td><td class="no">❌</td><td class="no">❌</td><td class="ok">✓</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="ok">✓</td></tr>
+          <tr><td class="row-label" style="--mc:#c060ff">☠️ Tóxico</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="ok">✓</td></tr>
+          <tr><td class="row-label" style="--mc:#ff4a7a">🧫 Ácido</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="no">❌</td><td class="ok">✓</td></tr>
+          <tr><td class="row-label" style="--mc:#4a9eff">🔵 Base</td><td class="warn">⚠️</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️</td><td class="no">❌</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+          <tr><td class="row-label" style="--mc:#7a8499">🧂 Inerte</td><td class="ok">✓</td><td class="warn">⚠️</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td></tr>
         </tbody>
       </table>
     </div>
@@ -356,7 +355,8 @@
     <div class="page-hero">
       <div class="eyebrow">ALMOXARIFADO</div>
       <h2>Planta do Almoxarifado</h2>
-      <p>Toque numa parede para ver suas 6 prateleiras. P1–P3 acesso fácil · P4–P6 requer escada 🪜</p>
+      <p>Toque numa parede para ver suas 6 prateleiras. P1–P3 acesso fácil · P4–P6 requer escada</p>
+      <div id="almoxHeroStats" class="almox-stats"></div>
     </div>
 
     <div class="maquete-legend">
@@ -394,51 +394,57 @@
     </div>
     <div id="maqueteSearchResults"></div>
 
-    <div class="maquete-plan-card">
-      <div class="maquete-plan-caption">Vista de cima — escolha a parede</div>
-      <div class="maquete-plan-stage">
-        <div class="maquete-plan-room"></div>
-        <div class="maquete-plan-area">
-          <span class="maquete-plan-area-icon">🚶</span>ÁREA DE<br>CIRCULAÇÃO
+    <div class="almox-layout">
+      <div class="almox-left">
+        <div class="maquete-plan-card">
+          <div class="maquete-plan-caption">Vista de cima — escolha a parede</div>
+          <div class="maquete-plan-stage">
+            <div class="maquete-plan-room"></div>
+            <div class="maquete-plan-area">
+              <span class="maquete-plan-area-icon">🚶</span>ÁREA DE<br>CIRCULAÇÃO
+            </div>
+            <button class="wallbtn wallbtn-top" data-wall="B" onclick="selectWall('B')" style="--wc:#f0c830;"><span>⚗️ FUNDO — ÁCIDOS</span></button>
+            <button class="wallbtn wallbtn-bottom" data-wall="F" onclick="selectWall('F')" style="--wc:#d080ff;"><span>☠️ FRENTE — TÓXICOS</span></button>
+            <button class="wallbtn wallbtn-v wallbtn-left" data-wall="L" onclick="selectWall('L')" style="--wc:#ff8850;"><span>🔥 ESQ — INFLAMÁVEIS</span></button>
+            <button class="wallbtn wallbtn-v wallbtn-right" data-wall="R" onclick="selectWall('R')" style="--wc:#70b8ff;"><span>🧂 DIR — SAIS</span></button>
+          </div>
+          <div class="maquete-plan-footer"><span id="wallCaption">👆 Selecione uma parede acima</span></div>
         </div>
-        <button class="wallbtn wallbtn-top" data-wall="B" onclick="selectWall('B')" style="--wc:#f0c830;"><span>⚗️ FUNDO — ÁCIDOS</span></button>
-        <button class="wallbtn wallbtn-bottom" data-wall="F" onclick="selectWall('F')" style="--wc:#d080ff;"><span>☠️ FRENTE — TÓXICOS</span></button>
-        <button class="wallbtn wallbtn-v wallbtn-left" data-wall="L" onclick="selectWall('L')" style="--wc:#ff8850;"><span>🔥 ESQ — INFLAMÁVEIS</span></button>
-        <button class="wallbtn wallbtn-v wallbtn-right" data-wall="R" onclick="selectWall('R')" style="--wc:#70b8ff;"><span>🧂 DIR — SAIS</span></button>
       </div>
-      <div class="maquete-plan-footer"><span id="wallCaption">👆 Selecione uma parede acima</span></div>
-    </div>
 
-    <div id="shelfStack">
-      <div class="shelf-stack-header">
-        <span id="stackIcon" class="shelf-stack-icon"></span>
-        <div>
-          <div class="shelf-stack-label">PAREDE</div>
-          <div id="stackTitle" class="shelf-stack-title"></div>
+      <div class="almox-right">
+        <div id="shelfStack">
+          <div class="shelf-stack-header">
+            <span id="stackIcon" class="shelf-stack-icon"></span>
+            <div>
+              <div class="shelf-stack-label">PAREDE</div>
+              <div id="stackTitle" class="shelf-stack-title"></div>
+            </div>
+            <div id="stackNote" class="shelf-stack-note"></div>
+          </div>
+          <div class="stock-disclaimer">
+            ℹ️ Os reagentes listados são exemplos representativos para fins acadêmicos e não correspondem necessariamente ao estoque real do almoxarifado.
+          </div>
+          <div id="shelfRows"></div>
         </div>
-        <div id="stackNote" class="shelf-stack-note"></div>
-      </div>
-      <div class="stock-disclaimer">
-        ℹ️ Os reagentes listados são exemplos representativos para fins acadêmicos e não correspondem necessariamente ao estoque real do almoxarifado.
-      </div>
-      <div id="shelfRows"></div>
-    </div>
 
-    <div id="shelfPanel">
-      <div class="shelf-panel-header">
-        <span id="pIcon" class="shelf-panel-icon"></span>
-        <div class="shelf-panel-meta">
-          <div id="pWall" class="shelf-panel-wall"></div>
-          <div id="pTitle" class="shelf-panel-title"></div>
+        <div id="shelfPanel">
+          <div class="shelf-panel-header">
+            <span id="pIcon" class="shelf-panel-icon"></span>
+            <div class="shelf-panel-meta">
+              <div id="pWall" class="shelf-panel-wall"></div>
+              <div id="pTitle" class="shelf-panel-title"></div>
+            </div>
+            <span id="pBadge" class="pbadge"></span>
+          </div>
+          <div id="pCtrl"></div>
+          <div id="pAccess"></div>
+          <div id="pDesc"></div>
+          <div id="pReagents"></div>
+          <div id="pRule"></div>
         </div>
-        <span id="pBadge" class="pbadge"></span>
       </div>
-      <div id="pCtrl"></div>
-      <div id="pAccess"></div>
-      <div id="pDesc"></div>
-      <div id="pReagents"></div>
-      <div id="pRule"></div>
-    </div>
+    </div><!-- /.almox-layout -->
 
     <button class="go-incompat-btn" onclick="goToIncompat()">
       <span>⚗️</span>
@@ -1649,7 +1655,7 @@
 
   <div class="footer-bottom">
     <div class="footer-bottom-left">© 2026 NADF — Núcleo Analítico de Desenvolvimento Farmacêutico · UNIFENAS</div>
-    <div class="footer-bottom-right">Alfa v4.4.2 · Última atualização: Jun 2026</div>
+    <div class="footer-bottom-right">Alfa v4.5.1 · Última atualização: Jun 2026</div>
   </div>
 </footer>
 

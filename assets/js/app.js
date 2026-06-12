@@ -30,10 +30,38 @@
     document.getElementById('classDrawerOverlay').classList.remove('open');
     document.getElementById('classDrawer').classList.remove('open');
     document.querySelectorAll('.class-card').forEach(c => c.classList.remove('expanded'));
-    document.body.style.overflow = '';
+    const sidebar = document.getElementById('appSidebar');
+    if (!sidebar || !sidebar.classList.contains('open')) document.body.style.overflow = '';
   }
 
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeClassDrawer(); });
+  function toggleSidebar() {
+    const sidebar = document.getElementById('appSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (!sidebar) return;
+    const isOpen = sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', !isOpen);
+    if (overlay) overlay.classList.toggle('open', !isOpen);
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+
+  function closeSidebar() {
+    const sidebar = document.getElementById('appSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (!sidebar || !sidebar.classList.contains('open')) return;
+    sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    const classDrawer = document.getElementById('classDrawer');
+    if (!classDrawer || !classDrawer.classList.contains('open')) document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    closeClassDrawer();
+    closeSidebar();
+    const srw = document.getElementById('searchResultWrapper');
+    if (srw) srw.style.display = 'none';
+    document.querySelectorAll('.incomp-dropdown').forEach(d => d.style.display = 'none');
+  });
 
   // ── Reagent chip CAS tooltip ───────────────────────────────────────────────
 
@@ -134,18 +162,27 @@
 
   function showTab(id, btn) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.remove('active');
+      t.removeAttribute('aria-current');
+    });
     const target = document.getElementById(id);
+    if (!target) return;
     target.style.animation = 'none';
     target.offsetHeight;
     target.style.animation = '';
     target.classList.add('active');
-    if (btn) {
-      btn.classList.add('active');
+    document.querySelectorAll(`.tab[data-tab="${id}"]`).forEach(t => {
+      t.classList.add('active');
+      t.setAttribute('aria-current', 'page');
+    });
+    if (btn && !btn.classList.contains('sidebar-item')) {
       btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
-    document.getElementById('searchResultWrapper').style.display = 'none';
+    const srw = document.getElementById('searchResultWrapper');
+    if (srw) srw.style.display = 'none';
     history.replaceState(null, '', '#' + id);
+    if (window.innerWidth < 860) closeSidebar();
   }
 
   // ── Matrix incompatibility tooltips ────────────────────────────────────────
@@ -179,7 +216,8 @@
   document.addEventListener('click', e => {
     const wrapper = document.getElementById('searchResultWrapper');
     if (!wrapper) return;
-    if (!wrapper.closest('.header-search').contains(e.target)) wrapper.style.display = 'none';
+    const container = wrapper.closest('.header-search');
+    if (!container || !container.contains(e.target)) wrapper.style.display = 'none';
   });
   document.getElementById('reagentSearchInput')?.addEventListener('focus', () => {
     const w = document.getElementById('searchResultWrapper');
@@ -194,8 +232,7 @@
     const [tabId, qs] = full.split('?');
 
     if (tabId && VALID_TABS.includes(tabId)) {
-      const btn = Array.from(document.querySelectorAll('.tab'))
-        .find(b => (b.getAttribute('onclick') || '').includes("'" + tabId + "'"));
+      const btn = document.querySelector(`.tab[data-tab="${tabId}"]`);
       showTab(tabId, btn || null);
     }
 
@@ -323,6 +360,53 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     renderFichasRisco();
+
+    // Almoxarifado hero — stats em tempo real com contador animado
+    const statsEl = document.getElementById('almoxHeroStats');
+    if (statsEl && typeof SHELF_DATA !== 'undefined') {
+      let total = 0, ctrl = 0, carc = 0;
+      for (const key of Object.keys(SHELF_DATA)) {
+        const s = SHELF_DATA[key];
+        if (!s || !s.reagents) continue;
+        s.reagents.forEach(r => {
+          if (!r) return;
+          total++;
+          if (typeof r === 'object') {
+            if (r.ctrl) ctrl++;
+            if (r.carc) carc++;
+          }
+        });
+      }
+      const shelves = Object.keys(SHELF_DATA).length;
+      const targets = [total, shelves, ctrl, carc];
+      statsEl.innerHTML =
+        `<span class="almox-stat"><span class="almox-stat-val">0</span>&nbsp;reagentes</span>` +
+        `<span class="almox-stat-sep">·</span>` +
+        `<span class="almox-stat"><span class="almox-stat-val">0</span>&nbsp;prateleiras</span>` +
+        `<span class="almox-stat-sep">·</span>` +
+        `<span class="almox-stat"><span class="almox-stat-val">0</span>&nbsp;controlados</span>` +
+        `<span class="almox-stat-sep">·</span>` +
+        `<span class="almox-stat"><span class="almox-stat-val">0</span>&nbsp;carc.</span>`;
+
+      function animateStat(el, target) {
+        const duration = 700;
+        const start = performance.now();
+        (function step(now) {
+          const t = Math.min((now - start) / duration, 1);
+          el.textContent = Math.round((1 - Math.pow(1 - t, 3)) * target);
+          if (t < 1) requestAnimationFrame(step);
+        })(performance.now());
+      }
+
+      let statsAnimated = false;
+      const obs = new IntersectionObserver(entries => {
+        if (!entries[0].isIntersecting || statsAnimated) return;
+        statsAnimated = true;
+        statsEl.querySelectorAll('.almox-stat-val').forEach((el, i) => animateStat(el, targets[i]));
+        obs.disconnect();
+      }, { threshold: 0.1 });
+      obs.observe(statsEl);
+    }
     document.querySelectorAll('#emergencias .emerg-reagent-chip').forEach(chip => {
       chip.classList.add('is-searchable');
       chip.style.cursor = 'pointer';

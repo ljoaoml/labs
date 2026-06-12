@@ -10,7 +10,7 @@
     html:not([data-theme="dark"]) {
       --bg: #f0f3fa; --surface: #ffffff; --surface2: #e6eaf5;
       --border: #ccd3e8; --text: #1c2238; --muted: #566080;
-      --accent: #007d56; --accent2: #1a6fd4; --warn: #a06000; --danger: #c02828;
+      --accent: #a07830; --accent2: #1a6fd4; --warn: #a06000; --danger: #c02828;
     }
     html:not([data-theme="dark"]) body { color-scheme: light; }
     html:not([data-theme="dark"]) header { background: rgba(255,255,255,0.94); }
@@ -25,7 +25,7 @@
     html:not([data-theme="dark"]) .cas-card,
     html:not([data-theme="dark"]) .qref-panel,
     html:not([data-theme="dark"]) .qsearch-dropdown,
-    html:not([data-theme="dark"]) .class-card { background: var(--surface); border-color: var(--border); }
+    html:not([data-theme="dark"]) .class-card { background: var(--surface); border-color: var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.05); }
     html:not([data-theme="dark"]) .emerg-scenario-content { color: var(--muted); }
     html:not([data-theme="dark"]) .emerg-warn  { background: rgba(160,96,0,0.08); border-color: rgba(160,96,0,0.25); }
     html:not([data-theme="dark"]) .emerg-danger{ background: rgba(192,40,40,0.08); border-color: rgba(192,40,40,0.25); }
@@ -71,7 +71,7 @@
   html[data-theme="light"] {
     --bg: #f0f3fa; --surface: #ffffff; --surface2: #e6eaf5;
     --border: #ccd3e8; --text: #1c2238; --muted: #566080;
-    --accent: #007d56; --accent2: #1a6fd4; --warn: #a06000; --danger: #c02828;
+    --accent: #a07830; --accent2: #1a6fd4; --warn: #a06000; --danger: #c02828;
   }
   html[data-theme="light"] body { color-scheme: light; }
   html[data-theme="light"] header { background: rgba(255,255,255,0.94); }
@@ -131,6 +131,6 @@
   html[data-theme="dark"] {
     --bg: #0d0f14; --surface: #161a22; --surface2: #1e2430;
     --border: #2a3040; --text: #e8ecf4; --muted: #7a8499;
-    --accent: #00c896; --accent2: #4a9eff; --warn: #ffb84a; --danger: #ff5757;
+    --accent: #d4a843; --accent2: #4a9eff; --warn: #ffb84a; --danger: #ff5757;
   }
   html[data-theme="dark"] body { color-scheme: dark; }
