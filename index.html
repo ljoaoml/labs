@@ -6,6 +6,7 @@
 <title>NADF · UNIFENAS — Organização de Reagentes</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/theme-light.css">
 <script>
   // Anti-FOUC: define tema antes do paint
   (function() {
@@ -118,7 +119,7 @@
   <div class="tabs" id="tabsBar">
     <button class="tab active" onclick="showTab('classes',this)">Classes de Risco</button>
     <button class="tab" onclick="showTab('incompatibilidade',this)">Incompatibilidades</button>
-    <button class="tab" onclick="showTab('maquete',this)">🏛️ Almoxarifado</button>
+    <button class="tab" onclick="showTab('almoxarifado',this)">🏛️ Almoxarifado</button>
     <button class="tab" onclick="showTab('cas',this)">CAS</button>
     <button class="tab" onclick="showTab('regras',this)">Regras de Armazenamento</button>
     <button class="tab" onclick="showTab('normas',this)">Normas Brasileiras</button>
@@ -318,6 +319,11 @@
         <li><span class="rule-num">☢️</span><div class="rule-text"><strong>Peróxidos formadores</strong><span>Éter, THF, dioxano: datar abertura, usar em até 3 meses, testar com fita de peróxido.</span></div></li>
       </ul>
     </div>
+    <div class="card">
+      <div class="card-title">Fichas de Risco Rápido</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Resumo FDS dos reagentes de maior risco considerando co-armazenamento em paredes distintas da mesma sala. Clique para expandir cada ficha.</p>
+      <div id="fichasRiscoContainer"></div>
+    </div>
   </section>
 
   <section id="normas" class="section">
@@ -346,7 +352,7 @@
     </div>
   </section>
 
-  <section id="maquete" class="section">
+  <section id="almoxarifado" class="section">
     <div class="page-hero">
       <div class="eyebrow">ALMOXARIFADO</div>
       <h2>Planta do Almoxarifado</h2>
@@ -372,6 +378,7 @@
         <button class="mfilter" data-filter="B" onclick="setMaqueteFilter('B',this)" style="--fc:#f0c830;">⚗️ Ácidos</button>
         <button class="mfilter" data-filter="R" onclick="setMaqueteFilter('R',this)" style="--fc:#70b8ff;">🧂 Sais/Bases</button>
         <button class="mfilter" data-filter="F" onclick="setMaqueteFilter('F',this)" style="--fc:#d080ff;">☠️ Tóxicos/Ox.</button>
+        <button class="mfilter" data-filter="carc" onclick="setMaqueteFilter('carc',this)" style="--fc:#d4b800;">☢️ Carcinogênicos</button>
       </div>
       <div class="maquete-search-wrap">
         <input type="text" id="maqueteSearchInput" class="maquete-search-input"
@@ -379,6 +386,11 @@
                oninput="performMaqueteSearch()" autocomplete="off"
                aria-label="Buscar reagente na maquete">
       </div>
+    </div>
+    <div class="export-inventory-bar">
+      <span class="export-label">📥 Exportar estoque completo:</span>
+      <button class="export-btn" id="exportPdfBtn" onclick="exportInventoryPDF()" title="Baixar inventário em PDF, organizado por parede e prateleira">⬇ PDF</button>
+      <button class="export-btn export-btn-xls" id="exportXlsBtn" onclick="exportInventoryExcel()" title="Baixar inventário em Excel, uma aba por parede">⬇ Excel</button>
     </div>
     <div id="maqueteSearchResults"></div>
 
@@ -433,6 +445,151 @@
       <span>Verificar incompatibilidade entre reagentes</span>
       <span class="go-incompat-arrow">→</span>
     </button>
+
+    <div class="card" id="card-segregacao">
+      <div class="card-title">Segregação e Proximidade</div>
+      <p class="card-hint">Reagentes que <strong>não devem ser armazenados diretamente acima/abaixo ou lado a lado</strong> entre si — mesmo que pertençam à mesma prateleira ou muro adjacente.</p>
+
+      <div class="segr-section">
+        <div class="segr-section-title">↕️ Vertical — não deixar diretamente acima / abaixo</div>
+
+        <div class="segr-row">
+          <div class="segr-icon">🧊</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-a">H₂SO₄ conc. (A16)</span>
+              <span class="segr-chip segr-chip-a">HCl conc. (A8)</span>
+              <span class="segr-sep">⬆</span>
+              <span class="segr-chip segr-chip-l">Ácido Acético Glacial (E3)</span>
+            </div>
+            <div class="segr-reason">Não deixar ácido acético glacial diretamente abaixo de H₂SO₄ ou HCl concentrados. Um vazamento dos ácidos fortes sobre o acético pode gerar vapores corrosivos e reação exotérmica.</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">🔥</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-f">KMnO₄ (T28)</span>
+              <span class="segr-chip segr-chip-f">Cromatos (T4/T9/T10)</span>
+              <span class="segr-sep">⬆</span>
+              <span class="segr-chip segr-chip-l">Inflamáveis / Orgânicos</span>
+            </div>
+            <div class="segr-reason">Oxidantes sólidos nunca acima de inflamáveis ou orgânicos. Um derramamento cria risco imediato de ignição espontânea.</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">⚗️</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-r">NaOH / KOH (B25/B24)</span>
+              <span class="segr-sep">⬆</span>
+              <span class="segr-chip segr-chip-a">Ácidos concentrados (B2)</span>
+            </div>
+            <div class="segr-reason">Bases fortes não devem ficar acima de ácidos concentrados. Vazamento resulta em reação violenta com liberação de calor.</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">💥</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-a">HNO₃ fumegante (A11)</span>
+              <span class="segr-sep">⬆ ⬇</span>
+              <span class="segr-chip segr-chip-l">Qualquer orgânico</span>
+              <span class="segr-chip segr-chip-a">HCl conc. (A8)</span>
+            </div>
+            <div class="segr-reason">HNO₃ concentrado não deve ficar acima nem abaixo de orgânicos (risco de incêndio/explosão) ou HCl (forma névoa de ClNO, água régia volátil).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="segr-section">
+        <div class="segr-section-title">↔️ Adjacência — não deixar lado a lado na mesma prateleira</div>
+
+        <div class="segr-row">
+          <div class="segr-icon">⚗️</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-f">KMnO₄ (T28)</span>
+              <span class="segr-sep">≠</span>
+              <span class="segr-chip segr-chip-l">Glicerina (E17)</span>
+              <span class="segr-chip segr-chip-l">H₂O₂ (T29)</span>
+              <span class="segr-chip segr-chip-a">HCl conc. (A8)</span>
+            </div>
+            <div class="segr-reason">KMnO₄ reage violentamente com glicerina/álcoois (inflamação espontânea), H₂O₂ (decomposição explosiva) e HCl concentrado (libera Cl₂).</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">☢️</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-r">NaI / KI (B28/B47)</span>
+              <span class="segr-sep">≠</span>
+              <span class="segr-chip segr-chip-r">FeCl₃ (B15)</span>
+              <span class="segr-chip segr-chip-f">Oxidantes (F3)</span>
+            </div>
+            <div class="segr-reason">Fe³⁺ e oxidantes fortes oxidam iodetos liberando I₂ livre — reagente corante e tóxico que contamina o entorno.</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">💀</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-f">Sulfeto de Sódio (T37)</span>
+              <span class="segr-sep">≠</span>
+              <span class="segr-chip segr-chip-a">Qualquer ácido</span>
+            </div>
+            <div class="segr-reason">Na₂S com ácido libera H₂S (gás sulfídrico), extremamente tóxico e letal em concentrações baixas. Manter rigorosamente segregado da parede de ácidos.</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">🔐</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-f">Cianeto/Azida (F1-COFRE)</span>
+              <span class="segr-sep">≠</span>
+              <span class="segr-chip segr-chip-a">Qualquer ácido</span>
+              <span class="segr-chip segr-chip-f">Oxidantes (F3)</span>
+            </div>
+            <div class="segr-reason">Cianetos com ácidos liberam HCN letal. Azida Sódica com ácidos libera HN₃ explosivo. Devem permanecer exclusivamente no COFRE.</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">⚡</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-f">NaNO₂ (T23)</span>
+              <span class="segr-sep">≠</span>
+              <span class="segr-chip segr-chip-r">NH₄⁺ compostos (R3/R4)</span>
+            </div>
+            <div class="segr-reason">Nitrito de sódio com sais de amônio (cloreto, sulfato) reage formando N₂O e água com risco de pressurização de frasco. Manter em bandejas separadas.</div>
+          </div>
+        </div>
+
+        <div class="segr-row">
+          <div class="segr-icon">🥈</div>
+          <div class="segr-body">
+            <div class="segr-pair">
+              <span class="segr-chip segr-chip-f">AgNO₃ / Sol. Ag (T22/T38)</span>
+              <span class="segr-sep">≠</span>
+              <span class="segr-chip segr-chip-r">NaCl / NaI / KI (B16/B28/B47)</span>
+              <span class="segr-chip segr-chip-f">Fenol (T13)</span>
+            </div>
+            <div class="segr-reason">Prata precipita imediatamente com cloretos, iodetos e fenolatos — contaminação de reagentes e obstrução de frascos. Manter em bandeja separada.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert--inline">
+        ⚠️ <span>Em caso de reorganização do almoxarifado, respeitar estas regras <strong>antes</strong> de posicionar qualquer reagente. Dúvidas: consultar a <strong>FDS (Ficha de Dados de Segurança)</strong> de cada produto ou o <strong>Verificador de Incompatibilidade</strong> desta plataforma.</span>
+      </div>
+    </div>
 
     <div class="card">
       <div class="card-title">Acesso e regras gerais</div>
@@ -1381,6 +1538,13 @@
 
 <script src="assets/js/data.js"></script>
 <script>window.AI_WORKER_URL = 'https://workers-ai-assistant.ljoaomarcosalves.workers.dev';</script>
+<script src="assets/js/modules/utils.js"></script>
+<script src="assets/js/modules/pubchem.js"></script>
+<script src="assets/js/modules/sheets.js"></script>
+<script src="assets/js/modules/export.js"></script>
+<script src="assets/js/modules/maquete.js"></script>
+<script src="assets/js/modules/busca.js"></script>
+<script src="assets/js/modules/ia.js"></script>
 <script src="assets/js/app.js"></script>
 
 <!-- IA Assistente Químico NADF ──────────────────────────────────── -->
@@ -1485,7 +1649,7 @@
 
   <div class="footer-bottom">
     <div class="footer-bottom-left">© 2026 NADF — Núcleo Analítico de Desenvolvimento Farmacêutico · UNIFENAS</div>
-    <div class="footer-bottom-right">Alfa v4.0.0 · Última atualização: Jun 2026</div>
+    <div class="footer-bottom-right">Alfa v4.4.2 · Última atualização: Jun 2026</div>
   </div>
 </footer>
 
