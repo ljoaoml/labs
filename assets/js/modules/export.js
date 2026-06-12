@@ -270,11 +270,32 @@
             },
           });
 
-          yPos = doc.lastAutoTable.finalY + 6;
+          yPos = doc.lastAutoTable.finalY + 3;
+
+          // Nota de posicionamento e incompatibilidade da prateleira
+          if (d.rule) {
+            const ruleText = _cleanStr(d.rule);
+            const ruleLines = doc.splitTextToSize(ruleText, 183);
+            const ruleH = ruleLines.length * 3.4 + 4;
+            if (yPos + ruleH > 282) {
+              doc.addPage();
+              doc.setFillColor(...dark); doc.rect(0,0,210,12,'F');
+              doc.setFillColor(...wi.rgb); doc.rect(0,0,4,12,'F');
+              doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...wi.rgb);
+              doc.text(wi.name + ' (cont.)', 10, 8);
+              yPos = 18;
+            }
+            doc.setFont('helvetica','italic'); doc.setFontSize(6.5);
+            doc.setTextColor(90,102,125);
+            doc.text(ruleLines, 12, yPos);
+            yPos += ruleH;
+          } else {
+            yPos += 3;
+          }
         }
       }
 
-      doc.save(`NADF_Inventario_${new Date().toISOString().slice(0,10)}.pdf`);
+      doc.save(`Inventário A.Ambientais ${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`);
 
     } catch (e) {
       alert('Erro ao gerar PDF: ' + e.message);
@@ -300,6 +321,7 @@
         ['NADF · UNIFENAS — Inventário de Reagentes Químicos'],
         [`Exportado em: ${new Date().toLocaleDateString('pt-BR')}`],
         [`Total de entradas: ${allRows.length}   |   Com código: ${codedCnt}`],
+        [`Ordenação: por código (A → B → E → Ind → T, numérico crescente)`],
         [],
         ['Parede','Reagentes'],
         ...Object.entries(_WALLS_EXP).map(([w, wi]) => [wi.name, allRows.filter(r => r.wall === w).length]),
@@ -365,7 +387,7 @@
       const url   = URL.createObjectURL(blob);
       const a     = document.createElement('a');
       a.href = url;
-      a.download = `NADF_Inventario_${new Date().toISOString().slice(0,10)}.xlsx`;
+      a.download = `Inventário A.Ambientais ${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.xlsx`;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
 

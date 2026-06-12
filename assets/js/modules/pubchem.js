@@ -34,15 +34,29 @@
 
     function _showRetry(msg) {
       if (!document.getElementById(containerId)) return;
-      container.innerHTML = `<div class="qref-pc-error">${msg}
-        <button class="qref-pc-retry" onclick="fetchPubChem(${JSON.stringify(keys)},'${containerId}')">↩ Tentar novamente</button>
-      </div>`;
+      const div = document.createElement('div');
+      div.className = 'qref-pc-error';
+      div.textContent = msg;
+      const retryBtn = document.createElement('button');
+      retryBtn.className = 'qref-pc-retry';
+      retryBtn.textContent = '↩ Tentar novamente';
+      retryBtn.addEventListener('click', () => fetchPubChem(keys, containerId, picsOnly));
+      div.appendChild(retryBtn);
+      container.innerHTML = '';
+      container.appendChild(div);
     }
 
     if (_pcCache.has(cacheKey)) {
       renderPubChemData(container, _pcCache.get(cacheKey), picsOnly);
       return;
     }
+
+    container.innerHTML = `<div class="qref-pc-skeleton">
+      <div class="qref-pc-skel-line" style="width:55%"></div>
+      <div class="qref-pc-skel-line" style="width:88%"></div>
+      <div class="qref-pc-skel-line" style="width:70%"></div>
+      <div class="qref-pc-skel-line" style="width:82%"></div>
+    </div>`;
 
     let cid = null;
     for (const key of keyList) {
